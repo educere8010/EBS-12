@@ -1,0 +1,2108 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EBS-12 분석지 | 에듀케레 영수학원</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1a2744;
+  --navy-light: #243461;
+  --gold: #c8a84b;
+  --gold-light: #e8d08b;
+  --cream: #fdf8f0;
+  --white: #ffffff;
+  --gray-100: #f5f5f5;
+  --gray-200: #e8e8e8;
+  --gray-600: #666;
+  --green-bg: #e8f5e9;
+  --green-text: #2e7d32;
+  --blue-bg: #e3f2fd;
+  --blue-text: #1565c0;
+  --yellow-bg: #fff8e1;
+  --yellow-text: #e65100;
+  --red: #c62828;
+  --correct: #2e7d32;
+  --wrong: #c62828;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background: var(--cream);
+  color: #222;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── SIDEBAR ── */
+#sidebar {
+  width: 220px;
+  min-width: 220px;
+  background: var(--navy);
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+#sidebar-header {
+  background: var(--navy-light);
+  padding: 20px 16px 16px;
+  border-bottom: 2px solid var(--gold);
+}
+#sidebar-header .academy {
+  font-size: 10px;
+  color: var(--gold-light);
+  letter-spacing: 1px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+#sidebar-header .series {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  color: var(--white);
+  font-weight: 700;
+}
+#sidebar-header .subtitle {
+  font-size: 10px;
+  color: #aab;
+  margin-top: 4px;
+}
+#passage-list {
+  padding: 12px 0;
+  flex: 1;
+}
+.passage-btn {
+  display: block;
+  width: 100%;
+  padding: 11px 16px;
+  background: none;
+  border: none;
+  color: #ccd;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+  transition: all .2s;
+  border-left: 3px solid transparent;
+  line-height: 1.4;
+}
+.passage-btn:hover { background: rgba(255,255,255,.07); color: var(--white); }
+.passage-btn.active {
+  background: rgba(200,168,75,.12);
+  color: var(--gold);
+  border-left-color: var(--gold);
+  font-weight: 700;
+}
+.passage-btn .pid { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+.passage-btn .ptitle { font-size: 10px; opacity: .75; }
+
+#sidebar-footer {
+  padding: 14px 16px;
+  border-top: 1px solid rgba(255,255,255,.1);
+  font-size: 9.5px;
+  color: #778;
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* ── MAIN ── */
+#main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* ── TOP BAR ── */
+#topbar {
+  background: var(--white);
+  border-bottom: 2px solid var(--navy);
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+.tab-btn {
+  padding: 14px 18px;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--gray-600);
+  cursor: pointer;
+  transition: all .2s;
+  white-space: nowrap;
+  margin-bottom: -2px;
+}
+.tab-btn:hover { color: var(--navy); }
+.tab-btn.active { color: var(--navy); border-bottom-color: var(--gold); font-weight: 700; }
+
+/* ── CONTENT ── */
+#content {
+  flex: 1;
+  padding: 32px 36px;
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ── PASSAGE HEADER ── */
+.passage-header {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--navy);
+}
+.passage-id {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  color: var(--navy);
+  font-weight: 700;
+}
+.passage-title-text {
+  font-size: 15px;
+  font-weight: 700;
+  color: #333;
+}
+.academy-badge {
+  margin-left: auto;
+  background: var(--navy);
+  color: var(--gold);
+  font-size: 10px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+/* ── FULL TEXT BOX ── */
+.full-text-box {
+  background: var(--white);
+  border: 1.5px solid #1a2744;
+  border-left: 5px solid var(--gold);
+  border-radius: 6px;
+  padding: 20px 24px;
+  margin-bottom: 32px;
+  font-family: 'EB Garamond', serif;
+  font-size: 17px;
+  line-height: 2;
+  color: #1a1a1a;
+}
+.full-text-box .ftlabel {
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 1.5px;
+  margin-bottom: 10px;
+}
+
+/* ── SECTION TITLE ── */
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  color: var(--navy);
+  font-weight: 700;
+  margin: 28px 0 16px;
+  padding-bottom: 6px;
+  border-bottom: 1.5px solid var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-title .icon { font-size: 16px; }
+
+/* ── SENTENCE ANALYSIS ── */
+.sentence-block { margin-bottom: 28px; }
+.sent-num {
+  display: inline-block;
+  background: var(--navy);
+  color: var(--white);
+  font-size: 11px;
+  font-weight: 700;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 24px;
+  margin-bottom: 8px;
+}
+.eng-box {
+  background: var(--white);
+  border: 1px solid #ccc;
+  border-left: 4px solid #2E75B6;
+  border-radius: 4px;
+  padding: 12px 16px;
+  font-family: 'EB Garamond', serif;
+  font-size: 15px;
+  line-height: 1.8;
+  color: #111;
+  margin-bottom: 8px;
+}
+.reading-box {
+  background: var(--gray-100);
+  border-radius: 4px;
+  padding: 10px 14px;
+  font-size: 12.5px;
+  line-height: 1.8;
+  color: #333;
+  margin-bottom: 10px;
+}
+.reading-eng { color: #2E75B6; font-weight: 500; margin-bottom: 3px; }
+.reading-kor { color: #444; }
+.grammar-items { padding: 0; }
+.grammar-item {
+  background: #fff8e1;
+  border-left: 3px solid var(--gold);
+  border-radius: 3px;
+  padding: 8px 12px;
+  margin-bottom: 6px;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.grammar-item .g-name { color: #7F6000; font-weight: 700; }
+.grammar-item .g-ex { color: #555; }
+.grammar-item .g-point { color: var(--navy); }
+
+/* ── VOCAB ── */
+.vocab-item {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 9px 14px;
+  border-radius: 5px;
+  margin-bottom: 6px;
+  background: #E2EFDA;
+  flex-wrap: wrap;
+}
+.vocab-item .v-word { font-family: 'EB Garamond', serif; font-size: 15px; font-weight: 700; color: #375623; min-width: 160px; }
+.vocab-item .v-meaning { font-size: 12.5px; color: #333; min-width: 140px; }
+.vocab-item .v-pos { font-size: 11px; color: #888; font-style: italic; min-width: 60px; }
+.vocab-item .v-deriv { font-size: 11.5px; color: var(--navy); }
+
+/* ── TRANSLATION ── */
+.translation-box {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 6px;
+  padding: 22px 26px;
+  font-size: 14px;
+  line-height: 2.2;
+  color: #222;
+}
+
+/* ── TOPIC ── */
+.topic-card {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  padding: 18px 22px;
+  margin-bottom: 12px;
+}
+.topic-card .tc-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+.topic-card .tc-content { font-size: 13.5px; line-height: 1.8; }
+.structure-step {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 10px;
+  align-items: flex-start;
+}
+.step-badge {
+  background: var(--navy);
+  color: var(--white);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 12px;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+.step-text { font-size: 13px; line-height: 1.7; }
+
+/* ── QUIZ ── */
+.quiz-block {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  padding: 22px 24px;
+  margin-bottom: 20px;
+}
+.quiz-block .q-num {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+.quiz-block .q-type {
+  font-size: 10px;
+  background: var(--navy);
+  color: var(--white);
+  padding: 2px 8px;
+  border-radius: 10px;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+.quiz-block .q-text {
+  font-size: 13.5px;
+  line-height: 1.9;
+  margin-bottom: 14px;
+  font-family: 'EB Garamond', serif;
+}
+.quiz-block .q-text.kor { font-family: 'Noto Sans KR', sans-serif; font-size: 13px; }
+.options { list-style: none; }
+.options li {
+  padding: 9px 14px;
+  border: 1.5px solid var(--gray-200);
+  border-radius: 6px;
+  margin-bottom: 7px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all .15s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.options li:hover { border-color: var(--navy); background: #f0f4ff; }
+.options li.correct { border-color: var(--correct); background: #e8f5e9; color: var(--correct); font-weight: 700; }
+.options li.wrong { border-color: var(--wrong); background: #ffebee; color: var(--wrong); text-decoration: line-through; }
+.options li.revealed { border-color: var(--correct); background: #e8f5e9; color: var(--correct); font-weight: 700; }
+.options li .opt-mark { font-size: 15px; }
+.feedback-box {
+  margin-top: 10px;
+  padding: 10px 14px;
+  background: #e3f2fd;
+  border-left: 3px solid var(--navy);
+  border-radius: 4px;
+  font-size: 12.5px;
+  color: var(--navy);
+  display: none;
+}
+.reset-btn {
+  margin-top: 10px;
+  background: none;
+  border: 1.5px solid var(--gray-200);
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--gray-600);
+  transition: all .15s;
+  display: none;
+}
+.reset-btn:hover { border-color: var(--navy); color: var(--navy); }
+
+/* ── WRITING ── */
+.writing-block {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  padding: 22px 24px;
+  margin-bottom: 20px;
+}
+.writing-block .w-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.writing-block .w-q { font-size: 13.5px; line-height: 1.9; margin-bottom: 6px; }
+.writing-block .w-cond {
+  font-size: 11.5px;
+  color: #888;
+  margin-bottom: 14px;
+  padding: 6px 12px;
+  background: var(--gray-100);
+  border-radius: 4px;
+}
+.writing-block textarea {
+  width: 100%;
+  border: 1.5px solid var(--gray-200);
+  border-radius: 6px;
+  padding: 12px;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 13px;
+  resize: vertical;
+  min-height: 90px;
+  outline: none;
+  transition: border-color .2s;
+}
+.writing-block textarea:focus { border-color: var(--navy); }
+.answer-toggle {
+  margin-top: 10px;
+  background: var(--navy);
+  color: var(--white);
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background .2s;
+}
+.answer-toggle:hover { background: var(--navy-light); }
+.model-answer {
+  margin-top: 10px;
+  padding: 12px 16px;
+  background: #e8f5e9;
+  border-left: 3px solid var(--correct);
+  border-radius: 4px;
+  font-size: 13px;
+  line-height: 1.8;
+  display: none;
+}
+.model-answer.show { display: block; }
+
+/* ── UNDERLINE QUIZ ── */
+.underline-word { text-decoration: underline; text-decoration-style: wavy; text-decoration-color: #888; cursor: pointer; padding: 0 2px; border-radius: 2px; transition: background .15s; }
+.underline-word:hover { background: var(--yellow-bg); }
+.underline-word.uw-correct { background: #e8f5e9; color: var(--correct); text-decoration-color: var(--correct); }
+.underline-word.uw-wrong { background: #ffebee; color: var(--wrong); text-decoration-color: var(--wrong); }
+
+hr.divider { border: none; border-top: 1px solid var(--gray-200); margin: 24px 0; }
+
+@media (max-width: 700px) {
+  #sidebar { width: 180px; min-width: 180px; }
+  #content { padding: 20px 16px; }
+  .tab-btn { padding: 12px 10px; font-size: 11px; }
+}
+</style>
+</head>
+<body>
+<nav id="sidebar">
+  <div id="sidebar-header">
+    <div class="academy">에듀케레 영수학원</div>
+    <div class="series">EBS-12</div>
+    <div class="subtitle">영어 독해 분석지</div>
+  </div>
+  <div id="passage-list">
+    <button class="passage-btn active" onclick="selectPassage('G')">
+      <div class="pid">12-G</div>
+      <div class="ptitle">Situational Ethics</div>
+    </button>
+    <button class="passage-btn" onclick="selectPassage('1')">
+      <div class="pid">12-1</div>
+      <div class="ptitle">Moral Outrage</div>
+    </button>
+    <button class="passage-btn" onclick="selectPassage('2')">
+      <div class="pid">12-2</div>
+      <div class="ptitle">Natural Products Instinct</div>
+    </button>
+    <button class="passage-btn" onclick="selectPassage('3')">
+      <div class="pid">12-3</div>
+      <div class="ptitle">Dietary Supplements</div>
+    </button>
+    <button class="passage-btn" onclick="selectPassage('4')">
+      <div class="pid">12-4</div>
+      <div class="ptitle">Literature's Living Meaning</div>
+    </button>
+  </div>
+  <div id="sidebar-footer">
+    에듀케레 영수학원<br>055-363-8010<br>경남 양산시 물금읍
+  </div>
+</nav>
+<div id="main">
+  <div id="topbar">
+    <button class="tab-btn active" onclick="selectTab('전문')">① 전문</button>
+    <button class="tab-btn" onclick="selectTab('문장분석')">② 문장분석</button>
+    <button class="tab-btn" onclick="selectTab('핵심단어')">③ 핵심단어</button>
+    <button class="tab-btn" onclick="selectTab('전문해석')">④ 전문해석</button>
+    <button class="tab-btn" onclick="selectTab('주제요지')">⑤ 주제·요지</button>
+    <button class="tab-btn" onclick="selectTab('변형문제')">⑥ 변형문제</button>
+  </div>
+  <div id="content">
+<!-- ═══════════════ PASSAGE G ═══════════════ -->
+<div class="passage-block" id="passage-G">
+
+<!-- ① 전문 -->
+<div class="tab-panel active" data-tab="전문" data-pid="G">
+  <div class="passage-header">
+    <span class="passage-id">12-G</span>
+    <span class="passage-title-text">Situational Ethics</span>
+    <span class="academy-badge">에듀케레 영수학원 분석지</span>
+  </div>
+  <div class="full-text-box">
+    <div class="ftlabel">FULL TEXT</div>
+    Situational ethics is an ethical theory that takes into account the context of a situation or an act when judging whether it is ethical. Supporters of this theory willingly permit casting aside ① absolute moral standards. In the absence of a universal standard or law, what matters is the outcome or consequences; so, the end ② justifies the means. Possibly the following contrasting realities can help illustrate the application of situational ethics. In a pickup game of basketball played among friends, everyone is expected to call his or her own fouls or acknowledge knocking the ball out-of-bounds. Caring about one's friends and maybe getting to ③ keep playing with the group leads to these actions. But, once an organized game is played with officials, most athletes will not admit to the same fouls or violations as the end goal of winning is more important than expressing ④ concern for competitors. Situational ethics has been extended by many athletes and coaches to mean trying to get away with as many actions on the field or court as possible to ⑤ abandon competitive advantages.
+  </div>
+</div>
+
+<!-- ② 문장분석 -->
+<div class="tab-panel" data-tab="문장분석" data-pid="G">
+  <div class="section-title"><span class="icon">🔍</span> 문장분석</div>
+
+  <div class="sentence-block">
+    <div class="sent-num">①</div>
+    <div class="eng-box">Situational ethics is an ethical theory <u>that takes into account the context of a situation or an act</u> when judging whether it is ethical.</div>
+    <div class="reading-box">
+      <div class="reading-eng">Situational ethics / is an ethical theory / that takes into account / the context of a situation or an act / when judging / whether it is ethical.</div>
+      <div class="reading-kor">상황 윤리는 / 윤리 이론이다 / 고려하는 / 상황이나 행위의 맥락을 / 판단할 때 / 그것이 윤리적인지 여부를.</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ 주격 관계대명사 that</span> / ▶ <span class="g-ex">an ethical theory <b>that</b> takes into account ~</span> / ★ <span class="g-point">선행사(an ethical theory)를 꾸미는 관계절의 동사 수 일치 확인</span></div>
+      <div class="grammar-item"><span class="g-name">◆ 시간 부사절 when+분사구문</span> / ▶ <span class="g-ex"><b>when judging</b> whether it is ethical</span> / ★ <span class="g-point">when+현재분사: 주절과 동일 주어 생략 구조</span></div>
+      <div class="grammar-item"><span class="g-name">◆ 간접의문문 whether</span> / ▶ <span class="g-ex">judging <b>whether</b> it is ethical</span> / ★ <span class="g-point">whether절이 동명사 judging의 목적어 역할</span></div>
+    </div>
+  </div>
+
+  <div class="sentence-block">
+    <div class="sent-num">②</div>
+    <div class="eng-box">Supporters of this theory willingly permit casting aside ① absolute moral standards.</div>
+    <div class="reading-box">
+      <div class="reading-eng">Supporters of this theory / willingly permit / casting aside / ① absolute moral standards.</div>
+      <div class="reading-kor">이 이론의 지지자들은 / 기꺼이 허용한다 / 제쳐두는 것을 / ① 절대적인 도덕 기준을.</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ permit + 동명사</span> / ▶ <span class="g-ex">permit <b>casting</b> aside</span> / ★ <span class="g-point">permit은 동명사를 목적어로 취함 (permit to-V도 가능하나 구별 필요)</span></div>
+      <div class="grammar-item"><span class="g-name">◆ 어법 문제: ① absolute (형용사)</span> / ▶ <span class="g-ex"><b>absolute</b> moral standards</span> / ★ <span class="g-point">명사 수식 → 형용사 절대적인 사용이 올바름</span></div>
+    </div>
+  </div>
+
+  <div class="sentence-block">
+    <div class="sent-num">③</div>
+    <div class="eng-box">In the absence of a universal standard or law, what matters is the outcome or consequences; so, the end ② justifies the means.</div>
+    <div class="reading-box">
+      <div class="reading-eng">In the absence of a universal standard or law, / what matters / is the outcome or consequences; / so, / the end ② justifies the means.</div>
+      <div class="reading-kor">보편적 기준이나 법이 없는 상황에서는 / 중요한 것은 / 결과나 결론이다; / 그래서 / 목적이 ② 수단을 정당화한다.</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ 관계대명사 what (선행사 포함)</span> / ▶ <span class="g-ex"><b>what</b> matters is the outcome</span> / ★ <span class="g-point">what절이 주어 역할; is의 단수 동사와 호응</span></div>
+      <div class="grammar-item"><span class="g-name">◆ 어법: ② justifies (3인칭 단수)</span> / ▶ <span class="g-ex">the end <b>justifies</b> the means</span> / ★ <span class="g-point">주어 the end가 단수 → 동사에 -s 필수</span></div>
+    </div>
+  </div>
+
+  <div class="sentence-block">
+    <div class="sent-num">④</div>
+    <div class="eng-box">Possibly the following contrasting realities can help illustrate the application of situational ethics.</div>
+    <div class="reading-box">
+      <div class="reading-eng">Possibly / the following contrasting realities / can help illustrate / the application of situational ethics.</div>
+      <div class="reading-kor">아마도 / 다음의 대조적인 현실들이 / 설명하는 데 도움이 될 수 있다 / 상황 윤리의 적용을.</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ help + 동사원형 (준사역)</span> / ▶ <span class="g-ex">can help <b>illustrate</b></span> / ★ <span class="g-point">help는 to-V 또는 동사원형 모두 가능; 수능 단골 어법</span></div>
+    </div>
+  </div>
+
+  <div class="sentence-block">
+    <div class="sent-num">⑤</div>
+    <div class="eng-box">In a pickup game of basketball played among friends, everyone is expected to call his or her own fouls or acknowledge knocking the ball out-of-bounds.</div>
+    <div class="reading-box">
+      <div class="reading-eng">In a pickup game of basketball / played among friends, / everyone is expected / to call his or her own fouls / or acknowledge knocking the ball out-of-bounds.</div>
+      <div class="reading-kor">친구들 사이에서 진행되는 비공식 농구 경기에서 / 모든 사람은 / 예상된다 / 자신의 파울을 선언하거나 / 공을 아웃시킨 것을 인정할 것으로.</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ be expected to-V (수동태 + 부정사)</span> / ▶ <span class="g-ex">everyone <b>is expected to call</b></span> / ★ <span class="g-point">수동태 구조에서 to-V 병렬 여부 확인</span></div>
+      <div class="grammar-item"><span class="g-name">◆ acknowledge + 동명사</span> / ▶ <span class="g-ex"><b>acknowledge knocking</b> the ball</span> / ★ <span class="g-point">acknowledge는 동명사만 목적어로 취함</span></div>
+      <div class="grammar-item"><span class="g-name">◆ 과거분사 후치수식</span> / ▶ <span class="g-ex">a pickup game <b>played</b> among friends</span> / ★ <span class="g-point">명사 뒤 과거분사구 = 수동 의미의 후치 수식</span></div>
+    </div>
+  </div>
+
+  <div class="sentence-block">
+    <div class="sent-num">⑥</div>
+    <div class="eng-box">Caring about one's friends and maybe getting to ③ keep playing with the group leads to these actions.</div>
+    <div class="reading-box">
+      <div class="reading-eng">Caring about one's friends / and maybe getting to ③ keep playing with the group / leads to these actions.</div>
+      <div class="reading-kor">친구들을 배려하고 / 그 그룹과 계속 ③ 경기를 이어가게 되는 것이 / 이러한 행동들로 이어진다.</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ 동명사 주어 + 단수 동사</span> / ▶ <span class="g-ex">Caring ~ and getting ~ <b>leads</b></span> / ★ <span class="g-point">동명사구 전체가 주어 → 단수 동사 leads 사용</span></div>
+      <div class="grammar-item"><span class="g-name">◆ get to + 동사원형</span> / ▶ <span class="g-ex"><b>getting to ③ keep</b> playing</span> / ★ <span class="g-point">get to V: ~하게 되다 (기회·허락); ③ keep은 to의 목적어로 원형 사용</span></div>
+    </div>
+  </div>
+
+  <div class="sentence-block">
+    <div class="sent-num">⑦</div>
+    <div class="eng-box">But, once an organized game is played with officials, most athletes will not admit to the same fouls or violations as the end goal of winning is more important than expressing ④ concern for competitors.</div>
+    <div class="reading-box">
+      <div class="reading-eng">But, / once an organized game is played with officials, / most athletes will not admit / to the same fouls or violations / as the end goal of winning / is more important than expressing ④ concern for competitors.</div>
+      <div class="reading-kor">그러나 / 일단 심판이 있는 공식 경기가 진행되면 / 대부분의 선수들은 인정하지 않을 것이다 / 동일한 파울이나 위반을 / 왜냐하면 이기는 최종 목표가 / 경쟁자들에 대한 ④ 배려를 표현하는 것보다 더 중요하기 때문이다.</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ 부사절 once (일단 ~하면)</span> / ▶ <span class="g-ex"><b>once</b> an organized game is played</span> / ★ <span class="g-point">once = as soon as; 시간·조건의 접속사</span></div>
+      <div class="grammar-item"><span class="g-name">◆ 비교급 more ~ than</span> / ▶ <span class="g-ex">more important than <b>expressing</b></span> / ★ <span class="g-point">than 뒤 동명사와 앞 명사구의 병렬 구조</span></div>
+      <div class="grammar-item"><span class="g-name">◆ 어법: ④ concern (명사)</span> / ▶ <span class="g-ex">expressing <b>④ concern</b> for competitors</span> / ★ <span class="g-point">expressing의 목적어로 명사 concern 적절</span></div>
+    </div>
+  </div>
+
+  <div class="sentence-block">
+    <div class="sent-num">⑧</div>
+    <div class="eng-box">Situational ethics has been extended by many athletes and coaches to mean trying to get away with as many actions on the field or court as possible to ⑤ abandon competitive advantages.</div>
+    <div class="reading-box">
+      <div class="reading-eng">Situational ethics / has been extended by many athletes and coaches / to mean / trying to get away with / as many actions on the field or court as possible / to ⑤ abandon competitive advantages.</div>
+      <div class="reading-kor">상황 윤리는 / 많은 선수와 코치들에 의해 확대 해석되어 왔다 / 의미하게끔 / 빠져나가려는 시도를 / 경기장에서 가능한 한 많은 행동들을 / ⑤ 경쟁적 이점을 포기하기 위해. [→ 실제 의미: 이점을 얻기 위해]</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ 현재완료 수동태</span> / ▶ <span class="g-ex"><b>has been extended</b></span> / ★ <span class="g-point">have/has been p.p.: 과거부터 현재까지 지속된 수동 행위</span></div>
+      <div class="grammar-item"><span class="g-name">◆ as ~ as possible (최대한)</span> / ▶ <span class="g-ex"><b>as many ~ as possible</b></span> / ★ <span class="g-point">as+형용사/부사+as possible: 가능한 한 ~하게</span></div>
+      <div class="grammar-item"><span class="g-name">◆ 어법 오류: ⑤ abandon → gain/secure</span> / ▶ <span class="g-ex">to ⑤ <b>abandon</b> competitive advantages</span> / ★ <span class="g-point">문맥상 이점을 '포기'가 아닌 '얻다'여야 함 → 내용 오류 지문</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ③ 핵심단어 -->
+<div class="tab-panel" data-tab="핵심단어" data-pid="G">
+  <div class="section-title"><span class="icon">📚</span> 핵심단어 및 표현</div>
+  <div class="vocab-item"><span class="v-word">situational</span><span class="v-meaning">상황에 따른, 상황적인</span><span class="v-pos">adj.</span><span class="v-deriv">situation (n.), situate (v.)</span></div>
+  <div class="vocab-item"><span class="v-word">ethical</span><span class="v-meaning">윤리적인, 도덕적인</span><span class="v-pos">adj.</span><span class="v-deriv">ethics (n.), ethically (adv.)</span></div>
+  <div class="vocab-item"><span class="v-word">permit</span><span class="v-meaning">허용하다, 허락하다</span><span class="v-pos">v.</span><span class="v-deriv">permission (n.), permissible (adj.)</span></div>
+  <div class="vocab-item"><span class="v-word">cast aside</span><span class="v-meaning">제쳐두다, 버리다</span><span class="v-pos">v. phr.</span><span class="v-deriv">—</span></div>
+  <div class="vocab-item"><span class="v-word">absolute</span><span class="v-meaning">절대적인, 완전한</span><span class="v-pos">adj.</span><span class="v-deriv">absolutely (adv.), absolutism (n.)</span></div>
+  <div class="vocab-item"><span class="v-word">consequence</span><span class="v-meaning">결과, 중요성</span><span class="v-pos">n.</span><span class="v-deriv">consequential (adj.), consequently (adv.)</span></div>
+  <div class="vocab-item"><span class="v-word">justify</span><span class="v-meaning">정당화하다</span><span class="v-pos">v.</span><span class="v-deriv">justification (n.), justifiable (adj.)</span></div>
+  <div class="vocab-item"><span class="v-word">illustrate</span><span class="v-meaning">설명하다, 예시하다</span><span class="v-pos">v.</span><span class="v-deriv">illustration (n.), illustrative (adj.)</span></div>
+  <div class="vocab-item"><span class="v-word">acknowledge</span><span class="v-meaning">인정하다, 시인하다</span><span class="v-pos">v.</span><span class="v-deriv">acknowledgment (n.)</span></div>
+  <div class="vocab-item"><span class="v-word">violation</span><span class="v-meaning">위반, 침해</span><span class="v-pos">n.</span><span class="v-deriv">violate (v.), violator (n.)</span></div>
+  <div class="vocab-item"><span class="v-word">competitive</span><span class="v-meaning">경쟁적인, 경쟁력 있는</span><span class="v-pos">adj.</span><span class="v-deriv">compete (v.), competition (n.), competitively (adv.)</span></div>
+  <div class="vocab-item"><span class="v-word">get away with</span><span class="v-meaning">~을 하고도 처벌을 피하다</span><span class="v-pos">v. phr.</span><span class="v-deriv">—</span></div>
+</div>
+
+<!-- ④ 전문해석 -->
+<div class="tab-panel" data-tab="전문해석" data-pid="G">
+  <div class="section-title"><span class="icon">📖</span> 전문해석</div>
+  <div class="translation-box">
+    상황 윤리는 어떤 상황이나 행위가 윤리적인지 판단할 때 그 맥락을 고려하는 윤리 이론이다. 이 이론의 지지자들은 절대적인 도덕 기준을 기꺼이 내려놓는 것을 허용한다. 보편적인 기준이나 법칙이 없는 상황에서는 결과나 결론이 중요하며, 따라서 목적이 수단을 정당화한다. 이러한 상황 윤리의 적용을 설명하는 데 다음의 대조적인 현실들이 도움이 될 수 있다. 친구들 사이의 비공식 농구 경기에서는 모든 사람이 자신의 파울을 스스로 선언하거나 공을 아웃시켰음을 인정할 것으로 기대된다. 친구들을 배려하고 그 그룹에서 계속 경기를 이어가고 싶은 마음이 이러한 행동으로 이어진다. 하지만 심판이 있는 공식 경기가 되면, 대부분의 선수들은 같은 파울이나 위반을 인정하려 하지 않는데, 이는 이기는 것이라는 최종 목표가 경쟁자에 대한 배려를 표현하는 것보다 더 중요하기 때문이다. 상황 윤리는 많은 선수와 코치들에 의해 경기장에서 가능한 한 많은 행동들을 처벌 없이 해낼 수 있도록 경쟁적 이점을 확보하려는 시도로 확대 해석되어 왔다.
+  </div>
+</div>
+
+<!-- ⑤ 주제·요지 -->
+<div class="tab-panel" data-tab="주제요지" data-pid="G">
+  <div class="section-title"><span class="icon">💡</span> 주제·요지·구조</div>
+  <div class="topic-card">
+    <div class="tc-label">THEME · 주제</div>
+    <div class="tc-content">상황에 따라 도덕 기준을 달리 적용하는 상황 윤리와 스포츠에서의 확대 적용</div>
+  </div>
+  <div class="topic-card">
+    <div class="tc-label">MAIN IDEA · 요지</div>
+    <div class="tc-content">상황 윤리는 절대적 도덕 기준 대신 결과를 중시하며, 스포츠에서는 승리라는 목적 아래 규칙 위반을 묵인하는 논리로 변질될 수 있다.</div>
+  </div>
+  <div class="topic-card">
+    <div class="tc-label">STRUCTURE · 구조</div>
+    <div class="tc-content">
+      <div class="structure-step"><span class="step-badge">도입</span><span class="step-text">상황 윤리의 정의 — 맥락을 고려해 윤리 판단, 절대 기준 배제</span></div>
+      <div class="structure-step"><span class="step-badge">전개1</span><span class="step-text">비공식 경기(픽업 게임): 우정과 소속감 → 자발적 규칙 준수</span></div>
+      <div class="structure-step"><span class="step-badge">전개2</span><span class="step-text">공식 경기(심판 있음): 승리 목표 우선 → 파울 인정 거부</span></div>
+      <div class="structure-step"><span class="step-badge">결론</span><span class="step-text">상황 윤리의 왜곡된 확대 — 경쟁 우위를 위해 반칙 정당화</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ⑥ 변형문제 -->
+<div class="tab-panel" data-tab="변형문제" data-pid="G">
+  <div class="section-title"><span class="icon">✏️</span> 변형문제</div>
+
+  <!-- Q1 주제추론 -->
+  <div class="quiz-block" id="qG1">
+    <div class="q-num">문항 1</div>
+    <div class="q-type">주제 추론</div>
+    <div class="q-text kor">위 글의 주제로 가장 적절한 것은?</div>
+    <ul class="options" id="qG1-opts">
+      <li onclick="checkAnswer('G',1,this,false,'상황 윤리의 핵심은 절대적 도덕 기준의 준수입니다.')"><span class="opt-mark">①</span> 절대적 도덕 기준의 중요성과 스포츠에서의 적용</li>
+      <li onclick="checkAnswer('G',1,this,false,'상황 윤리는 우정을 전제로 하지 않습니다.')"><span class="opt-mark">②</span> 우정이 스포츠 경기에서 도덕적 판단에 미치는 영향</li>
+      <li onclick="checkAnswer('G',1,this,true,'상황 윤리는 결과를 중시하며 스포츠에서 규칙 위반 정당화로 변질됩니다.')"><span class="opt-mark">③</span> 상황 윤리의 개념과 스포츠에서의 왜곡된 확대 적용</li>
+      <li onclick="checkAnswer('G',1,this,false,'공식 경기 규칙 제정이 아닌 상황 윤리에 관한 글입니다.')"><span class="opt-mark">④</span> 공식 스포츠 경기에서 심판 역할과 규칙 제정의 필요성</li>
+      <li onclick="checkAnswer('G',1,this,false,'결과주의와 의무론을 비교하는 글이 아닙니다.')"><span class="opt-mark">⑤</span> 결과주의 윤리와 의무론적 윤리의 철학적 비교</li>
+    </ul>
+    <div class="feedback-box" id="qG1-fb"></div>
+    <button class="reset-btn" id="qG1-reset" onclick="resetQuiz('G',1)">↺ 다시 풀기</button>
+  </div>
+
+  <!-- Q2 빈칸추론 -->
+  <div class="quiz-block" id="qG2">
+    <div class="q-num">문항 2</div>
+    <div class="q-type">빈칸 추론</div>
+    <div class="q-text">In the absence of a universal standard or law, what matters is the outcome or consequences; so, the end __________ the means.</div>
+    <ul class="options" id="qG2-opts">
+      <li onclick="checkAnswer('G',2,this,false,'negate는 부정하다는 의미로 문맥에 맞지 않습니다.')"><span class="opt-mark">①</span> negates</li>
+      <li onclick="checkAnswer('G',2,this,true,'justifies(정당화하다)가 정답으로, 목적이 수단을 정당화한다는 상황 윤리의 핵심입니다.')"><span class="opt-mark">②</span> justifies</li>
+      <li onclick="checkAnswer('G',2,this,false,'replaces는 대체한다는 의미로 내용과 다릅니다.')"><span class="opt-mark">③</span> replaces</li>
+      <li onclick="checkAnswer('G',2,this,false,'undermines는 약화시킨다는 뜻으로 반대 방향입니다.')"><span class="opt-mark">④</span> undermines</li>
+      <li onclick="checkAnswer('G',2,this,false,'ignores는 무시하다는 뜻으로 문맥상 적절하지 않습니다.')"><span class="opt-mark">⑤</span> ignores</li>
+    </ul>
+    <div class="feedback-box" id="qG2-fb"></div>
+    <button class="reset-btn" id="qG2-reset" onclick="resetQuiz('G',2)">↺ 다시 풀기</button>
+  </div>
+
+  <!-- Q3 어법 -->
+  <div class="quiz-block" id="qG3">
+    <div class="q-num">문항 3</div>
+    <div class="q-type">어법 오류</div>
+    <div class="q-text">다음 밑줄 친 부분 중 어법상 틀린 것은?<br><br>
+    Supporters of this theory willingly permit <span class="underline-word" onclick="checkUnderline('G',3,this,false,'casting은 permit의 목적어인 동명사로 올바릅니다.')" data-idx="1">casting</span> aside absolute moral standards. In the absence of a universal standard or law, what matters <span class="underline-word" onclick="checkUnderline('G',3,this,false,'is는 단수 주어 what절과 호응하여 올바릅니다.')" data-idx="2">is</span> the outcome. Caring about one's friends and getting to keep playing with the group <span class="underline-word" onclick="checkUnderline('G',3,this,false,'leads는 동명사 주어(Caring~getting)에 호응하는 단수 동사로 올바릅니다.')" data-idx="3">leads</span> to these actions. Most athletes will not admit to the same fouls as the end goal of winning is more important than <span class="underline-word" onclick="checkUnderline('G',3,this,false,'expressing은 than 뒤에 오는 동명사로 올바릅니다.')" data-idx="4">expressing</span> concern. Situational ethics has been extended to mean trying to get away with as many actions as possible to <span class="underline-word" onclick="checkUnderline('G',3,this,true,'abandon(포기하다)은 문맥상 틀림 → gain/secure(얻다/확보하다)이 되어야 합니다.')" data-idx="5">abandon</span> competitive advantages.
+    </div>
+    <div class="feedback-box" id="qG3-fb"></div>
+    <button class="reset-btn" id="qG3-reset" onclick="resetUnderline('G',3)">↺ 다시 풀기</button>
+  </div>
+
+  <!-- Q4 내용불일치 -->
+  <div class="quiz-block" id="qG4">
+    <div class="q-num">문항 4</div>
+    <div class="q-type">내용 불일치</div>
+    <div class="q-text kor">위 글의 내용과 일치하지 않는 것은?</div>
+    <ul class="options" id="qG4-opts">
+      <li onclick="checkAnswer('G',4,this,false,'상황 윤리는 행위의 맥락을 고려한다고 명시되어 있습니다.')"><span class="opt-mark">①</span> 상황 윤리는 어떤 행위가 윤리적인지 판단할 때 그 맥락을 고려한다.</li>
+      <li onclick="checkAnswer('G',4,this,false,'지지자들이 절대적 도덕 기준을 제쳐두는 것을 허용한다고 했습니다.')"><span class="opt-mark">②</span> 이 이론의 지지자들은 절대적 도덕 기준을 기꺼이 내려놓는다.</li>
+      <li onclick="checkAnswer('G',4,this,false,'비공식 경기에서 파울 인정은 우정과 소속감 때문입니다.')"><span class="opt-mark">③</span> 비공식 경기에서 파울을 인정하는 행동은 우정에 대한 배려에서 비롯된다.</li>
+      <li onclick="checkAnswer('G',4,this,true,'공식 경기에서 대부분의 선수들은 파울을 인정하지 않습니다. 인정한다는 것은 불일치.')"><span class="opt-mark">④</span> 공식 경기에서도 대부분의 선수들은 파울을 솔직하게 인정한다.</li>
+      <li onclick="checkAnswer('G',4,this,false,'많은 선수와 코치들이 상황 윤리를 이점을 위해 확대 해석했다고 했습니다.')"><span class="opt-mark">⑤</span> 많은 선수와 코치들이 상황 윤리를 경쟁 우위를 위한 방식으로 확대 해석해 왔다.</li>
+    </ul>
+    <div class="feedback-box" id="qG4-fb"></div>
+    <button class="reset-btn" id="qG4-reset" onclick="resetQuiz('G',4)">↺ 다시 풀기</button>
+  </div>
+
+  <!-- Q5 글의 순서 -->
+  <div class="quiz-block" id="qG5">
+    <div class="q-num">문항 5</div>
+    <div class="q-type">글의 순서</div>
+    <div class="q-text">주어진 글 다음에 이어질 글의 순서로 가장 적절한 것은?<br><br>
+    <b>주어진 글:</b> Situational ethics is an ethical theory that takes into account the context of a situation or an act when judging whether it is ethical. Supporters of this theory willingly permit casting aside absolute moral standards.<br><br>
+    <b>(A)</b> But, once an organized game is played with officials, most athletes will not admit to the same fouls or violations as the end goal of winning is more important than expressing concern for competitors.<br>
+    <b>(B)</b> Possibly the following contrasting realities can help illustrate the application of situational ethics. In a pickup game of basketball played among friends, everyone is expected to call his or her own fouls.<br>
+    <b>(C)</b> In the absence of a universal standard or law, what matters is the outcome or consequences; so, the end justifies the means.</div>
+    <ul class="options" id="qG5-opts">
+      <li onclick="checkAnswer('G',5,this,false,'A는 But으로 시작하므로 앞에 비공식 경기(B) 내용이 먼저 와야 합니다.')"><span class="opt-mark">①</span> (A)-(B)-(C)</li>
+      <li onclick="checkAnswer('G',5,this,false,'B가 먼저 오고 A가 대조를 이루어야 합니다.')"><span class="opt-mark">②</span> (B)-(A)-(C)</li>
+      <li onclick="checkAnswer('G',5,this,true,'C(원칙 설명) → B(비공식 경기 예시) → A(공식 경기 대조)의 흐름이 자연스럽습니다.')"><span class="opt-mark">③</span> (C)-(B)-(A)</li>
+      <li onclick="checkAnswer('G',5,this,false,'C는 원칙 설명이므로 맨 앞에 와야 합니다.')"><span class="opt-mark">④</span> (A)-(C)-(B)</li>
+      <li onclick="checkAnswer('G',5,this,false,'C가 먼저 원칙을 설명해야 합니다.')"><span class="opt-mark">⑤</span> (B)-(C)-(A)</li>
+    </ul>
+    <div class="feedback-box" id="qG5-fb"></div>
+    <button class="reset-btn" id="qG5-reset" onclick="resetQuiz('G',5)">↺ 다시 풀기</button>
+  </div>
+
+  <!-- 서술형 -->
+  <div class="section-title" style="margin-top:32px"><span class="icon">✍️</span> 서술형</div>
+  <div class="writing-block">
+    <div class="w-label">서술형 1 · 빈칸 요약</div>
+    <div class="w-q">다음 빈칸 (A), (B)에 들어갈 말을 본문에서 찾아 쓰시오.<br><br>
+    Situational ethics allows people to set aside (A) <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u> standards and focuses on (B) <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>, which can lead athletes to justify rule-breaking for competitive advantage.</div>
+    <div class="w-cond">조건: 본문에서 찾아 그대로 쓸 것 / (A) 1단어, (B) 1단어</div>
+    <textarea placeholder="답안을 여기에 작성하세요..."></textarea>
+    <button class="answer-toggle" onclick="toggleAnswer(this)">모범답안 보기</button>
+    <div class="model-answer">(A) absolute&nbsp;&nbsp;&nbsp;(B) consequences<br><small>해설: 상황 윤리는 절대적(absolute) 기준을 버리고 결과(consequences)를 중시합니다.</small></div>
+  </div>
+  <div class="writing-block">
+    <div class="w-label">서술형 2 · 영어 서술</div>
+    <div class="w-q">상황 윤리가 스포츠에서 어떻게 적용되는지 비공식 경기와 공식 경기를 대조하여 설명하시오.</div>
+    <div class="w-cond">조건: 완전한 영어 문장으로 / 35단어 내외</div>
+    <textarea placeholder="답안을 여기에 작성하세요..."></textarea>
+    <button class="answer-toggle" onclick="toggleAnswer(this)">모범답안 보기</button>
+    <div class="model-answer">In a pickup game, players call their own fouls due to friendship, but in an official game, athletes refuse to admit fouls because winning becomes the priority, showing how situational ethics shifts based on context.</div>
+  </div>
+</div>
+
+</div><!-- end passage-G -->
+<!-- ═══════════════ PASSAGE 1 ═══════════════ -->
+<div class="passage-block" id="passage-1" style="display:none">
+
+<!-- ① 전문 -->
+<div class="tab-panel active" data-tab="전문" data-pid="1">
+  <div class="passage-header">
+    <span class="passage-id">12-1</span>
+    <span class="passage-title-text">Moral Outrage</span>
+    <span class="academy-badge">에듀케레 영수학원 분석지</span>
+  </div>
+  <div class="full-text-box">
+    <div class="ftlabel">FULL TEXT</div>
+    Moral outrage is the psychological tool that motivates people to punish wrongdoers, even at cost or risk to themselves. It is a "commitment device," something that commits people to punishment, even though trying to punish someone can be ① dangerous. When we witness unjust harm, whether someone committing interpersonal violence or obvious cheating, we have an embodied ② physical reaction. We get angry, our blood pressure spikes, our heart beats faster; we thirst for retribution. Outrage leads us to ③ recognize the irrationality of risking our own safety to punish someone. In any single situation, there is rarely an immediate personal benefit for meting out punishment, and often there is real risk, because the person you are serving ④ justice against could lash out at you or get revenge in the future. But the powerful feeling of outrage leads us to momentarily forget this unfavorable evaluation and get involved in a situation we would be better off ⑤ avoiding, and science reveals how this feeling and forgetting is essential for maintaining a cooperative society.
+  </div>
+</div>
+
+<!-- ② 문장분석 -->
+<div class="tab-panel" data-tab="문장분석" data-pid="1">
+  <div class="section-title"><span class="icon">🔍</span> 문장분석</div>
+
+  <div class="sentence-block">
+    <div class="sent-num">①</div>
+    <div class="eng-box">Moral outrage is the psychological tool <u>that motivates people to punish wrongdoers</u>, even at cost or risk to themselves.</div>
+    <div class="reading-box">
+      <div class="reading-eng">Moral outrage / is the psychological tool / that motivates people / to punish wrongdoers, / even at cost or risk to themselves.</div>
+      <div class="reading-kor">도덕적 분노는 / 심리적 도구이다 / 사람들에게 동기를 부여하는 / 잘못을 저지른 자를 처벌하도록 / 자신에게 대가나 위험이 있더라도.</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ 주격 관계대명사 that</span> / ▶ <span class="g-ex">the psychological tool <b>that motivates</b> people</span> / ★ <span class="g-point">선행사 the tool이 단수 → motivates에 -s 필수</span></div>
+      <div class="grammar-item"><span class="g-name">◆ motivate + 목적어 + to-V</span> / ▶ <span class="g-ex">motivates people <b>to punish</b></span> / ★ <span class="g-point">motivate는 to부정사를 취하는 동사 (5형식)</span></div>
+    </div>
+  </div>
+
+  <div class="sentence-block">
+    <div class="sent-num">②</div>
+    <div class="eng-box">It is a "commitment device," something that commits people to punishment, even though trying to punish someone can be ① dangerous.</div>
+    <div class="reading-box">
+      <div class="reading-eng">It is a "commitment device," / something that commits people to punishment, / even though / trying to punish someone / can be ① dangerous.</div>
+      <div class="reading-kor">그것은 "헌신 장치"이다 / 사람들을 처벌에 헌신하도록 만드는 것 / 비록 / 누군가를 처벌하려는 시도가 / ① 위험할 수 있더라도.</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ 동격 명사 (콤마 + something that)</span> / ▶ <span class="g-ex">a "commitment device," <b>something that</b> commits</span> / ★ <span class="g-point">앞 명사를 부연 설명하는 동격 관계절</span></div>
+      <div class="grammar-item"><span class="g-name">◆ even though (양보 부사절)</span> / ▶ <span class="g-ex"><b>even though</b> trying to punish ~ can be dangerous</span> / ★ <span class="g-point">even though vs even if 구별: 사실적 양보 vs 가정적 양보</span></div>
+      <div class="grammar-item"><span class="g-name">◆ 동명사 주어 + 단수 동사</span> / ▶ <span class="g-ex"><b>trying to punish</b> someone <b>can be</b></span> / ★ <span class="g-point">동명사구 주어는 단수 취급</span></div>
+    </div>
+  </div>
+
+  <div class="sentence-block">
+    <div class="sent-num">③</div>
+    <div class="eng-box">When we witness unjust harm, whether someone committing interpersonal violence or obvious cheating, we have an embodied ② physical reaction.</div>
+    <div class="reading-box">
+      <div class="reading-eng">When we witness unjust harm, / whether someone committing interpersonal violence / or obvious cheating, / we have an embodied ② physical reaction.</div>
+      <div class="reading-kor">우리가 부당한 피해를 목격할 때 / 누군가가 대인 폭력을 저지르든 / 명백한 속임수를 쓰든 간에 / 우리는 구체적인 ② 신체적 반응을 경험한다.</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ whether A or B (선택 부사절)</span> / ▶ <span class="g-ex"><b>whether</b> committing violence <b>or</b> cheating</span> / ★ <span class="g-point">whether A or B: A이든 B이든 (병렬 구조 주의)</span></div>
+      <div class="grammar-item"><span class="g-name">◆ 어법: ② physical (형용사)</span> / ▶ <span class="g-ex">an embodied <b>physical</b> reaction</span> / ★ <span class="g-point">명사 reaction을 수식 → 형용사 형태 필요</span></div>
+    </div>
+  </div>
+
+  <div class="sentence-block">
+    <div class="sent-num">④</div>
+    <div class="eng-box">We get angry, our blood pressure spikes, our heart beats faster; we thirst for retribution.</div>
+    <div class="reading-box">
+      <div class="reading-eng">We get angry, / our blood pressure spikes, / our heart beats faster; / we thirst for retribution.</div>
+      <div class="reading-kor">우리는 화가 나고 / 혈압이 급상승하며 / 심장이 더 빠르게 뛴다 / 우리는 응보를 갈망한다.</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ 감각동사 get + 형용사</span> / ▶ <span class="g-ex">We <b>get angry</b></span> / ★ <span class="g-point">get + 형용사 = 상태 변화 (become의 의미)</span></div>
+      <div class="grammar-item"><span class="g-name">◆ thirst for (갈망하다)</span> / ▶ <span class="g-ex"><b>thirst for</b> retribution</span> / ★ <span class="g-point">thirst for = long for = yearn for: 수능 어휘 동의어</span></div>
+    </div>
+  </div>
+
+  <div class="sentence-block">
+    <div class="sent-num">⑤</div>
+    <div class="eng-box">Outrage leads us to ③ recognize the irrationality of risking our own safety to punish someone.</div>
+    <div class="reading-box">
+      <div class="reading-eng">Outrage leads us / to ③ recognize / the irrationality / of risking our own safety / to punish someone.</div>
+      <div class="reading-kor">분노는 우리로 하여금 / ③ 인식하게 한다 / 비합리성을 / 우리 자신의 안전을 위험에 빠뜨리는 것의 / 누군가를 처벌하기 위해.</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ lead + 목적어 + to-V (사역적)</span> / ▶ <span class="g-ex">leads us <b>to recognize</b></span> / ★ <span class="g-point">lead/cause/enable + O + to-V 구조</span></div>
+      <div class="grammar-item"><span class="g-name">◆ 어법 오류: ③ recognize → ignore/overlook</span> / ▶ <span class="g-ex">leads us to <b>③ recognize</b> the irrationality</span> / ★ <span class="g-point">문맥상 분노는 비합리성을 '인식'하는 게 아니라 '무시'하게 만들므로 틀린 표현</span></div>
+      <div class="grammar-item"><span class="g-name">◆ 전치사 of + 동명사</span> / ▶ <span class="g-ex">the irrationality <b>of risking</b></span> / ★ <span class="g-point">명사(irrationality) 뒤 of + 동명사구로 내용 보충</span></div>
+    </div>
+  </div>
+
+  <div class="sentence-block">
+    <div class="sent-num">⑥</div>
+    <div class="eng-box">In any single situation, there is rarely an immediate personal benefit for meting out punishment, and often there is real risk, because the person you are serving ④ justice against could lash out at you or get revenge in the future.</div>
+    <div class="reading-box">
+      <div class="reading-eng">In any single situation, / there is rarely an immediate personal benefit / for meting out punishment, / and often there is real risk, / because the person / you are serving ④ justice against / could lash out at you / or get revenge in the future.</div>
+      <div class="reading-kor">어떤 단일 상황에서도 / 즉각적인 개인적 이익이 거의 없다 / 처벌을 집행하는 것에 대한 / 그리고 종종 실제 위험이 있다 / 왜냐하면 그 사람이 / 당신이 ④ 정의를 구현하려는 대상인 / 당신에게 반격하거나 / 미래에 복수할 수 있기 때문이다.</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ there is/are 존재 구문</span> / ▶ <span class="g-ex"><b>there is rarely</b> an immediate personal benefit</span> / ★ <span class="g-point">부사(rarely) 위치: there is/are 뒤에서 수식</span></div>
+      <div class="grammar-item"><span class="g-name">◆ 목적격 관계대명사 생략</span> / ▶ <span class="g-ex">the person [(whom) you are serving justice against]</span> / ★ <span class="g-point">전치사 against의 목적어인 관계대명사 whom 생략</span></div>
+    </div>
+  </div>
+
+  <div class="sentence-block">
+    <div class="sent-num">⑦</div>
+    <div class="eng-box">But the powerful feeling of outrage leads us to momentarily forget this unfavorable evaluation and get involved in a situation we would be better off ⑤ avoiding, and science reveals how this feeling and forgetting is essential for maintaining a cooperative society.</div>
+    <div class="reading-box">
+      <div class="reading-eng">But the powerful feeling of outrage / leads us to momentarily forget / this unfavorable evaluation / and get involved in a situation / we would be better off ⑤ avoiding, / and science reveals / how this feeling and forgetting / is essential / for maintaining a cooperative society.</div>
+      <div class="reading-kor">하지만 강렬한 분노의 감정이 / 우리로 하여금 일시적으로 잊게 만들고 / 이 불리한 평가를 / 상황에 개입하게 한다 / 우리가 ⑤ 피하는 편이 더 나을 / 그리고 과학은 밝힌다 / 이 감정과 망각이 / 어떻게 필수적인지 / 협력적인 사회를 유지하는 데.</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ be better off + 동명사</span> / ▶ <span class="g-ex">would be better off <b>⑤ avoiding</b></span> / ★ <span class="g-point">be better off + V-ing: ~하는 편이 더 낫다 (동명사 필수)</span></div>
+      <div class="grammar-item"><span class="g-name">◆ 간접의문문 how</span> / ▶ <span class="g-ex">reveals <b>how</b> this feeling ~ is essential</span> / ★ <span class="g-point">how절이 reveals의 목적어; 어순: how + S + V</span></div>
+      <div class="grammar-item"><span class="g-name">◆ 목적격 관계대명사 생략</span> / ▶ <span class="g-ex">a situation [(that) we would be better off avoiding]</span> / ★ <span class="g-point">관계대명사 that 생략 구조</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ③ 핵심단어 -->
+<div class="tab-panel" data-tab="핵심단어" data-pid="1">
+  <div class="section-title"><span class="icon">📚</span> 핵심단어 및 표현</div>
+  <div class="vocab-item"><span class="v-word">moral outrage</span><span class="v-meaning">도덕적 분노</span><span class="v-pos">n. phr.</span><span class="v-deriv">outrageous (adj.), outrage (v.)</span></div>
+  <div class="vocab-item"><span class="v-word">wrongdoer</span><span class="v-meaning">잘못을 저지른 자, 범죄자</span><span class="v-pos">n.</span><span class="v-deriv">wrongdoing (n.)</span></div>
+  <div class="vocab-item"><span class="v-word">commitment device</span><span class="v-meaning">헌신 장치 (행동을 강제하는 심리적 메커니즘)</span><span class="v-pos">n. phr.</span><span class="v-deriv">commit (v.), commitment (n.)</span></div>
+  <div class="vocab-item"><span class="v-word">interpersonal</span><span class="v-meaning">대인 관계의, 사람들 사이의</span><span class="v-pos">adj.</span><span class="v-deriv">person (n.), personal (adj.)</span></div>
+  <div class="vocab-item"><span class="v-word">embodied</span><span class="v-meaning">구체화된, 몸으로 느끼는</span><span class="v-pos">adj.</span><span class="v-deriv">embody (v.), body (n.)</span></div>
+  <div class="vocab-item"><span class="v-word">retribution</span><span class="v-meaning">응보, 보복</span><span class="v-pos">n.</span><span class="v-deriv">retributive (adj.)</span></div>
+  <div class="vocab-item"><span class="v-word">irrationality</span><span class="v-meaning">비합리성</span><span class="v-pos">n.</span><span class="v-deriv">irrational (adj.), rationally (adv.)</span></div>
+  <div class="vocab-item"><span class="v-word">mete out</span><span class="v-meaning">(처벌 등을) 부과하다, 집행하다</span><span class="v-pos">v. phr.</span><span class="v-deriv">—</span></div>
+  <div class="vocab-item"><span class="v-word">lash out</span><span class="v-meaning">맹렬히 공격하다, 반격하다</span><span class="v-pos">v. phr.</span><span class="v-deriv">—</span></div>
+  <div class="vocab-item"><span class="v-word">unfavorable</span><span class="v-meaning">불리한, 부정적인</span><span class="v-pos">adj.</span><span class="v-deriv">favor (n.), favorable (adj.)</span></div>
+  <div class="vocab-item"><span class="v-word">cooperative</span><span class="v-meaning">협력적인, 협동하는</span><span class="v-pos">adj.</span><span class="v-deriv">cooperate (v.), cooperation (n.)</span></div>
+  <div class="vocab-item"><span class="v-word">essential</span><span class="v-meaning">필수적인, 본질적인</span><span class="v-pos">adj.</span><span class="v-deriv">essence (n.), essentially (adv.)</span></div>
+</div>
+
+<!-- ④ 전문해석 -->
+<div class="tab-panel" data-tab="전문해석" data-pid="1">
+  <div class="section-title"><span class="icon">📖</span> 전문해석</div>
+  <div class="translation-box">
+    도덕적 분노는 사람들이 잘못을 저지른 자를 처벌하도록 동기를 부여하는 심리적 도구로, 심지어 자신에게 대가나 위험이 따르더라도 그렇게 하게 만든다. 이것은 일종의 "헌신 장치"로, 누군가를 처벌하려는 시도가 위험할 수 있음에도 불구하고 사람들을 처벌에 헌신하게 만드는 것이다. 우리가 부당한 피해를 목격할 때, 그것이 대인 폭력이든 명백한 속임수이든, 우리는 신체적으로 구체화된 반응을 경험한다. 우리는 화가 나고, 혈압이 급상승하며, 심장이 더 빠르게 뛴다; 우리는 응보를 갈망한다. 분노는 우리로 하여금 자신의 안전을 위험에 빠뜨리면서까지 누군가를 처벌하는 것의 비합리성을 인식하지 못하게 만든다. 어떠한 상황에서도 처벌을 집행하는 데 있어 즉각적인 개인적 이익이 거의 없으며, 오히려 실제 위험이 존재한다. 왜냐하면 처벌 대상이 당신에게 반격하거나 미래에 복수할 수 있기 때문이다. 그러나 강렬한 분노의 감정은 우리로 하여금 일시적으로 이 불리한 판단을 잊게 만들고 피하는 편이 더 나을 상황에 개입하게 만든다. 과학은 이러한 감정과 망각이 협력적인 사회를 유지하는 데 얼마나 필수적인지를 밝혀주고 있다.
+  </div>
+</div>
+
+<!-- ⑤ 주제·요지 -->
+<div class="tab-panel" data-tab="주제요지" data-pid="1">
+  <div class="section-title"><span class="icon">💡</span> 주제·요지·구조</div>
+  <div class="topic-card">
+    <div class="tc-label">THEME · 주제</div>
+    <div class="tc-content">도덕적 분노가 사회적 협력 유지에 기여하는 심리적 메커니즘</div>
+  </div>
+  <div class="topic-card">
+    <div class="tc-label">MAIN IDEA · 요지</div>
+    <div class="tc-content">도덕적 분노는 개인적 위험에도 불구하고 처벌 행동을 이끄는 헌신 장치로, 비합리적으로 보이지만 협력적 사회를 유지하는 데 필수적이다.</div>
+  </div>
+  <div class="topic-card">
+    <div class="tc-label">STRUCTURE · 구조</div>
+    <div class="tc-content">
+      <div class="structure-step"><span class="step-badge">도입</span><span class="step-text">도덕적 분노의 정의 — 처벌 동기를 부여하는 심리적 도구</span></div>
+      <div class="structure-step"><span class="step-badge">전개1</span><span class="step-text">분노의 신체적 반응 — 혈압 상승, 심박수 증가, 응보 갈망</span></div>
+      <div class="structure-step"><span class="step-badge">전개2</span><span class="step-text">처벌의 비용과 위험 — 개인적 이익 없음, 반격·복수 위험 존재</span></div>
+      <div class="structure-step"><span class="step-badge">결론</span><span class="step-text">분노의 역설적 기능 — 비합리적 개입을 유도하나 사회 협력 유지에 필수</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ⑥ 변형문제 -->
+<div class="tab-panel" data-tab="변형문제" data-pid="1">
+  <div class="section-title"><span class="icon">✏️</span> 변형문제</div>
+
+  <div class="quiz-block" id="q11">
+    <div class="q-num">문항 1</div><div class="q-type">주제 추론</div>
+    <div class="q-text kor">위 글의 주제로 가장 적절한 것은?</div>
+    <ul class="options" id="q11-opts">
+      <li onclick="checkAnswer('1',1,this,false,'분노 조절의 방법은 이 글의 주제가 아닙니다.')"><span class="opt-mark">①</span> 분노를 효과적으로 조절하는 심리적 방법</li>
+      <li onclick="checkAnswer('1',1,this,false,'처벌 시스템의 역사는 이 글에서 다루지 않습니다.')"><span class="opt-mark">②</span> 사회적 처벌 시스템의 역사적 발전</li>
+      <li onclick="checkAnswer('1',1,this,true,'도덕적 분노는 비합리적이지만 사회 협력에 필수적인 심리 기제입니다.')"><span class="opt-mark">③</span> 도덕적 분노가 사회적 협력 유지에 기여하는 심리적 메커니즘</li>
+      <li onclick="checkAnswer('1',1,this,false,'폭력 예방이 아닌 분노의 기능을 다루는 글입니다.')"><span class="opt-mark">④</span> 대인 폭력과 부정행위를 예방하는 사회적 규범</li>
+      <li onclick="checkAnswer('1',1,this,false,'신체 건강과의 관계는 글의 핵심이 아닙니다.')"><span class="opt-mark">⑤</span> 분노가 신체 건강에 미치는 부정적 영향</li>
+    </ul>
+    <div class="feedback-box" id="q11-fb"></div>
+    <button class="reset-btn" id="q11-reset" onclick="resetQuiz('1',1)">↺ 다시 풀기</button>
+  </div>
+
+  <div class="quiz-block" id="q12">
+    <div class="q-num">문항 2</div><div class="q-type">빈칸 추론</div>
+    <div class="q-text">Moral outrage is a "commitment device" that commits people to punishment, even though it can be __________. This feeling leads people to forget the personal risk and get involved in situations they would be better off avoiding.</div>
+    <ul class="options" id="q12-opts">
+      <li onclick="checkAnswer('1',2,this,false,'rewarding(보람 있는)은 문맥과 반대입니다.')"><span class="opt-mark">①</span> rewarding</li>
+      <li onclick="checkAnswer('1',2,this,false,'amusing(재미있는)은 전혀 맥락에 맞지 않습니다.')"><span class="opt-mark">②</span> amusing</li>
+      <li onclick="checkAnswer('1',2,this,true,'dangerous(위험한)가 정답으로, 처벌이 위험해도 분노가 이를 감수하게 합니다.')"><span class="opt-mark">③</span> dangerous</li>
+      <li onclick="checkAnswer('1',2,this,false,'beneficial(유익한)은 문맥과 반대입니다.')"><span class="opt-mark">④</span> beneficial</li>
+      <li onclick="checkAnswer('1',2,this,false,'predictable(예측 가능한)은 핵심 내용과 다릅니다.')"><span class="opt-mark">⑤</span> predictable</li>
+    </ul>
+    <div class="feedback-box" id="q12-fb"></div>
+    <button class="reset-btn" id="q12-reset" onclick="resetQuiz('1',2)">↺ 다시 풀기</button>
+  </div>
+
+  <div class="quiz-block" id="q13">
+    <div class="q-num">문항 3</div><div class="q-type">어법 오류</div>
+    <div class="q-text">다음 밑줄 친 부분 중 어법상 틀린 것은?<br><br>
+    Moral outrage is the psychological tool that <span class="underline-word" onclick="checkUnderline('1',3,this,false,'motivates는 단수 선행사 tool에 호응하는 올바른 형태입니다.')" data-idx="1">motivates</span> people to punish wrongdoers. It is something that commits people to punishment, even though trying to punish someone can be <span class="underline-word" onclick="checkUnderline('1',3,this,false,'dangerous는 be동사 뒤 보어로 형용사 형태가 올바릅니다.')" data-idx="2">dangerous</span>. Outrage leads us to <span class="underline-word" onclick="checkUnderline('1',3,this,true,'recognize(인식하다)는 문맥상 틀림 → ignore/overlook(무시하다)이어야 합니다. 분노는 비합리성을 인식하는 것이 아니라 잊게 만듭니다.')" data-idx="3">recognize</span> the irrationality of risking our own safety. The person you are serving justice against could <span class="underline-word" onclick="checkUnderline('1',3,this,false,'lash out은 조동사 could 뒤 동사원형으로 올바릅니다.')" data-idx="4">lash out</span> at you. The powerful feeling of outrage leads us to momentarily forget and get involved in a situation we would be better off <span class="underline-word" onclick="checkUnderline('1',3,this,false,'avoiding은 be better off 뒤에 오는 동명사로 올바릅니다.')" data-idx="5">avoiding</span>.
+    </div>
+    <div class="feedback-box" id="q13-fb"></div>
+    <button class="reset-btn" id="q13-reset" onclick="resetUnderline('1',3)">↺ 다시 풀기</button>
+  </div>
+
+  <div class="quiz-block" id="q14">
+    <div class="q-num">문항 4</div><div class="q-type">내용 불일치</div>
+    <div class="q-text kor">위 글의 내용과 일치하지 않는 것은?</div>
+    <ul class="options" id="q14-opts">
+      <li onclick="checkAnswer('1',4,this,false,'도덕적 분노는 처벌 동기를 부여하는 심리적 도구라고 했습니다.')"><span class="opt-mark">①</span> 도덕적 분노는 잘못을 저지른 자를 처벌하도록 동기를 부여한다.</li>
+      <li onclick="checkAnswer('1',4,this,false,'분노는 혈압 상승, 심박수 증가 등 신체적 반응을 일으킵니다.')"><span class="opt-mark">②</span> 부당한 피해를 목격하면 혈압 상승 등 신체적 반응이 나타난다.</li>
+      <li onclick="checkAnswer('1',4,this,true,'분노는 비합리성을 인식하게 하는 것이 아니라 잊게 만든다고 했습니다.')"><span class="opt-mark">③</span> 분노는 처벌의 비합리성을 명확하게 인식하도록 도와준다.</li>
+      <li onclick="checkAnswer('1',4,this,false,'처벌 대상이 반격하거나 복수할 위험이 있다고 명시되었습니다.')"><span class="opt-mark">④</span> 처벌 행동에는 처벌 대상의 반격이나 복수라는 위험이 따른다.</li>
+      <li onclick="checkAnswer('1',4,this,false,'이 감정과 망각이 협력 사회 유지에 필수적이라고 했습니다.')"><span class="opt-mark">⑤</span> 과학은 도덕적 분노와 망각이 협력적 사회 유지에 필수적임을 밝혔다.</li>
+    </ul>
+    <div class="feedback-box" id="q14-fb"></div>
+    <button class="reset-btn" id="q14-reset" onclick="resetQuiz('1',4)">↺ 다시 풀기</button>
+  </div>
+
+  <div class="quiz-block" id="q15">
+    <div class="q-num">문항 5</div><div class="q-type">글의 순서</div>
+    <div class="q-text">주어진 글 다음에 이어질 글의 순서로 가장 적절한 것은?<br><br>
+    <b>주어진 글:</b> Moral outrage is the psychological tool that motivates people to punish wrongdoers, even at cost or risk to themselves. It is a "commitment device," something that commits people to punishment, even though trying to punish someone can be dangerous.<br><br>
+    <b>(A)</b> But the powerful feeling of outrage leads us to momentarily forget this unfavorable evaluation and get involved in a situation we would be better off avoiding, and science reveals how this feeling and forgetting is essential for maintaining a cooperative society.<br>
+    <b>(B)</b> We get angry, our blood pressure spikes, our heart beats faster; we thirst for retribution. Outrage leads us to ignore the irrationality of risking our own safety to punish someone.<br>
+    <b>(C)</b> In any single situation, there is rarely an immediate personal benefit for meting out punishment, and often there is real risk, because the person you are serving justice against could lash out at you or get revenge in the future.</div>
+    <ul class="options" id="q15-opts">
+      <li onclick="checkAnswer('1',5,this,false,'B에서 신체 반응 설명 후 C에서 위험 설명, A에서 역설적 결론이 이어져야 합니다.')"><span class="opt-mark">①</span> (A)-(C)-(B)</li>
+      <li onclick="checkAnswer('1',5,this,true,'B(신체 반응·비합리성) → C(위험 존재) → A(그럼에도 개입, 사회적 역할)의 흐름이 자연스럽습니다.')"><span class="opt-mark">②</span> (B)-(C)-(A)</li>
+      <li onclick="checkAnswer('1',5,this,false,'C는 위험을 설명하므로 B의 신체 반응 이후에 와야 합니다.')"><span class="opt-mark">③</span> (C)-(A)-(B)</li>
+      <li onclick="checkAnswer('1',5,this,false,'A의 But은 앞의 내용을 전제로 하므로 가장 나중에 와야 합니다.')"><span class="opt-mark">④</span> (A)-(B)-(C)</li>
+      <li onclick="checkAnswer('1',5,this,false,'C가 B보다 먼저 오면 신체 반응 설명이 없어 흐름이 부자연스럽습니다.')"><span class="opt-mark">⑤</span> (C)-(B)-(A)</li>
+    </ul>
+    <div class="feedback-box" id="q15-fb"></div>
+    <button class="reset-btn" id="q15-reset" onclick="resetQuiz('1',5)">↺ 다시 풀기</button>
+  </div>
+
+  <div class="section-title" style="margin-top:32px"><span class="icon">✍️</span> 서술형</div>
+  <div class="writing-block">
+    <div class="w-label">서술형 1 · 빈칸 요약</div>
+    <div class="w-q">다음 빈칸 (A), (B)에 들어갈 말을 본문에서 찾아 쓰시오.<br><br>
+    Moral outrage is a "(A) <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u> device" that drives people to punish wrongdoers despite personal risk, and this irrational behavior is essential for maintaining a (B) <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u> society.</div>
+    <div class="w-cond">조건: 본문에서 찾아 그대로 쓸 것 / 각 1단어</div>
+    <textarea placeholder="답안을 여기에 작성하세요..."></textarea>
+    <button class="answer-toggle" onclick="toggleAnswer(this)">모범답안 보기</button>
+    <div class="model-answer">(A) commitment&nbsp;&nbsp;&nbsp;(B) cooperative</div>
+  </div>
+  <div class="writing-block">
+    <div class="w-label">서술형 2 · 영어 서술</div>
+    <div class="w-q">도덕적 분노가 개인에게는 비합리적임에도 불구하고 사회적으로 중요한 이유를 설명하시오.</div>
+    <div class="w-cond">조건: 완전한 영어 문장으로 / 30단어 내외</div>
+    <textarea placeholder="답안을 여기에 작성하세요..."></textarea>
+    <button class="answer-toggle" onclick="toggleAnswer(this)">모범답안 보기</button>
+    <div class="model-answer">Although moral outrage leads people to take irrational risks, it motivates punishment of wrongdoers, which is essential for maintaining a cooperative society where people trust each other.</div>
+  </div>
+</div>
+
+</div><!-- end passage-1 -->
+<!-- ═══════════════ PASSAGE 2 ═══════════════ -->
+<div class="passage-block" id="passage-2" style="display:none">
+
+<!-- ① 전문 -->
+<div class="tab-panel active" data-tab="전문" data-pid="2">
+  <div class="passage-header">
+    <span class="passage-id">12-2</span>
+    <span class="passage-title-text">Natural Products Instinct</span>
+    <span class="academy-badge">에듀케레 영수학원 분석지</span>
+  </div>
+  <div class="full-text-box">
+    <div class="ftlabel">FULL TEXT</div>
+    Why do humans have the counterproductive instinct to favor natural products in the absence of knowledge of their benefits or their potential for harm? The answer likely lies in our genes. Our species, through most of its evolutionary history, relied heavily upon ① experience to judge whether ingestion of something was beneficial (i.e., nutritional or medicinal) versus whether it was dangerous (i.e., poisonous). We evolved the instinct to avoid plants that made us sick and favored those that made us well. Treating unknowns with great caution provided a terrific survival ② advantage. Today, we trust that products of nature are safe to consume. But those pills coming off a pharmaceutical production line look ③ nothing like what our instincts tell us is safe to eat. The ingredients remind us of a high school chemistry lab. Yet we are expected to consume them. Thus, we treat them with ④ favor just as our distant ancestors regarded a new plant. When in need of a remedy, we are drawn to derivatives of our food, plant products, which we perceive to be safe, and not ⑤ artificial products of science.
+  </div>
+</div>
+
+<!-- ② 문장분석 -->
+<div class="tab-panel" data-tab="문장분석" data-pid="2">
+  <div class="section-title"><span class="icon">🔍</span> 문장분석</div>
+
+  <div class="sentence-block">
+    <div class="sent-num">①</div>
+    <div class="eng-box">Why do humans have the counterproductive instinct to favor natural products in the absence of knowledge of their benefits or their potential for harm?</div>
+    <div class="reading-box">
+      <div class="reading-eng">Why do humans have / the counterproductive instinct / to favor natural products / in the absence of knowledge / of their benefits or their potential for harm?</div>
+      <div class="reading-kor">왜 인간은 가지고 있는가 / 역효과를 내는 본능을 / 천연 제품을 선호하는 / 지식이 없는 상황에서도 / 그것의 이점이나 잠재적 해로움에 대한?</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ to부정사 형용사적 용법</span> / ▶ <span class="g-ex">the instinct <b>to favor</b> natural products</span> / ★ <span class="g-point">명사(instinct) 수식 → to-V 형용사적 용법</span></div>
+      <div class="grammar-item"><span class="g-name">◆ in the absence of (전치사구)</span> / ▶ <span class="g-ex"><b>in the absence of</b> knowledge</span> / ★ <span class="g-point">= without: 전치사구로 조건·상황 표현</span></div>
+    </div>
+  </div>
+
+  <div class="sentence-block">
+    <div class="sent-num">②</div>
+    <div class="eng-box">Our species, through most of its evolutionary history, relied heavily upon ① experience to judge whether ingestion of something was beneficial (i.e., nutritional or medicinal) versus whether it was dangerous (i.e., poisonous).</div>
+    <div class="reading-box">
+      <div class="reading-eng">Our species, / through most of its evolutionary history, / relied heavily upon ① experience / to judge / whether ingestion of something was beneficial / versus whether it was dangerous.</div>
+      <div class="reading-kor">우리 종은 / 진화 역사의 대부분을 통해 / ① 경험에 크게 의존했다 / 판단하기 위해 / 어떤 것을 섭취하는 것이 유익한지 / 대 위험한지를.</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ rely upon + 명사</span> / ▶ <span class="g-ex">relied heavily <b>upon ① experience</b></span> / ★ <span class="g-point">rely on/upon: ~에 의존하다 (전치사 on/upon 호환)</span></div>
+      <div class="grammar-item"><span class="g-name">◆ whether A versus whether B</span> / ▶ <span class="g-ex"><b>whether</b> ~ beneficial <b>versus whether</b> ~ dangerous</span> / ★ <span class="g-point">whether절 병렬: A인지 B인지 선택 비교</span></div>
+      <div class="grammar-item"><span class="g-name">◆ to부정사 목적 용법</span> / ▶ <span class="g-ex"><b>to judge</b> whether ~</span> / ★ <span class="g-point">~하기 위해: 목적을 나타내는 to부정사 부사적 용법</span></div>
+    </div>
+  </div>
+
+  <div class="sentence-block">
+    <div class="sent-num">③</div>
+    <div class="eng-box">We evolved the instinct to avoid plants that made us sick and favored those that made us well.</div>
+    <div class="reading-box">
+      <div class="reading-eng">We evolved the instinct / to avoid plants / that made us sick / and favored those / that made us well.</div>
+      <div class="reading-kor">우리는 본능을 발전시켰다 / 식물을 피하는 / 우리를 아프게 만드는 / 그리고 저것들(식물들)을 선호했다 / 우리를 건강하게 만드는.</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ 사역동사 make + O + 형용사</span> / ▶ <span class="g-ex">plants that <b>made us sick</b></span> / ★ <span class="g-point">make + 목적어 + 형용사: 5형식 구조</span></div>
+      <div class="grammar-item"><span class="g-name">◆ 동사 병렬 (evolved ~ and favored)</span> / ▶ <span class="g-ex"><b>evolved</b> ~ and <b>favored</b></span> / ★ <span class="g-point">and로 연결된 두 동사는 같은 시제·형태로 병렬</span></div>
+    </div>
+  </div>
+
+  <div class="sentence-block">
+    <div class="sent-num">④</div>
+    <div class="eng-box">Treating unknowns with great caution provided a terrific survival ② advantage.</div>
+    <div class="reading-box">
+      <div class="reading-eng">Treating unknowns with great caution / provided a terrific survival ② advantage.</div>
+      <div class="reading-kor">미지의 것들을 매우 신중하게 다루는 것이 / 엄청난 생존 ② 이점을 제공했다.</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ 동명사 주어</span> / ▶ <span class="g-ex"><b>Treating</b> unknowns ~ <b>provided</b></span> / ★ <span class="g-point">동명사구 = 단수 주어 → 단수 동사 provided</span></div>
+    </div>
+  </div>
+
+  <div class="sentence-block">
+    <div class="sent-num">⑤</div>
+    <div class="eng-box">But those pills coming off a pharmaceutical production line look ③ nothing like what our instincts tell us is safe to eat.</div>
+    <div class="reading-box">
+      <div class="reading-eng">But those pills / coming off a pharmaceutical production line / look ③ nothing like / what our instincts tell us / is safe to eat.</div>
+      <div class="reading-kor">하지만 그 알약들은 / 제약 생산 라인에서 나오는 / ③ 전혀 닮지 않았다 / 우리의 본능이 우리에게 말해주는 것과 / 먹기에 안전하다고.</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ look nothing like (전혀 ~처럼 보이지 않다)</span> / ▶ <span class="g-ex">look <b>③ nothing like</b> what ~</span> / ★ <span class="g-point">nothing like = not at all like: 완전 부정 강조 표현</span></div>
+      <div class="grammar-item"><span class="g-name">◆ 관계대명사 what + 삽입절</span> / ▶ <span class="g-ex"><b>what</b> our instincts tell us [is safe]</span> / ★ <span class="g-point">tell us가 삽입절; what절의 실제 동사는 is</span></div>
+      <div class="grammar-item"><span class="g-name">◆ 현재분사 후치수식</span> / ▶ <span class="g-ex">those pills <b>coming off</b> a production line</span> / ★ <span class="g-point">능동 의미의 현재분사가 명사를 뒤에서 수식</span></div>
+    </div>
+  </div>
+
+  <div class="sentence-block">
+    <div class="sent-num">⑥</div>
+    <div class="eng-box">The ingredients remind us of a high school chemistry lab.</div>
+    <div class="reading-box">
+      <div class="reading-eng">The ingredients / remind us of / a high school chemistry lab.</div>
+      <div class="reading-kor">그 성분들은 / 우리에게 떠올리게 한다 / 고등학교 화학 실험실을.</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ remind A of B</span> / ▶ <span class="g-ex"><b>remind us of</b> a chemistry lab</span> / ★ <span class="g-point">remind A of B: A에게 B를 떠올리게 하다 (4형식 전치사 구문)</span></div>
+    </div>
+  </div>
+
+  <div class="sentence-block">
+    <div class="sent-num">⑦</div>
+    <div class="eng-box">Thus, we treat them with ④ favor just as our distant ancestors regarded a new plant.</div>
+    <div class="reading-box">
+      <div class="reading-eng">Thus, / we treat them with ④ favor / just as / our distant ancestors regarded a new plant.</div>
+      <div class="reading-kor">따라서 / 우리는 그것들을 ④ 호의 없이 대한다 / 마치 / 먼 조상들이 새로운 식물을 여겼던 것처럼. [→ with favor는 '호의적으로'인데 문맥상 의심/경계로 대해야 함]</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ just as (비교 접속사: 마치 ~처럼)</span> / ▶ <span class="g-ex"><b>just as</b> our distant ancestors regarded</span> / ★ <span class="g-point">just as = in the same way that: 유사 비교</span></div>
+      <div class="grammar-item"><span class="g-name">◆ 어법 오류: ④ favor → suspicion/caution</span> / ▶ <span class="g-ex">treat them with <b>④ favor</b></span> / ★ <span class="g-point">문맥상 약을 경계·의심하며 대함 → with caution/suspicion이 적절</span></div>
+    </div>
+  </div>
+
+  <div class="sentence-block">
+    <div class="sent-num">⑧</div>
+    <div class="eng-box">When in need of a remedy, we are drawn to derivatives of our food, plant products, which we perceive to be safe, and not ⑤ artificial products of science.</div>
+    <div class="reading-box">
+      <div class="reading-eng">When in need of a remedy, / we are drawn to / derivatives of our food, plant products, / which we perceive to be safe, / and not ⑤ artificial products of science.</div>
+      <div class="reading-kor">치료제가 필요할 때 / 우리는 이끌린다 / 우리 음식의 파생물인 식물 제품으로 / 우리가 안전하다고 인식하는 / 그리고 ⑤ 과학의 인공적인 제품들로는 아닌.</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ when + 분사구문 축약</span> / ▶ <span class="g-ex"><b>When in need of</b> a remedy</span> / ★ <span class="g-point">When (we are) in need of: 주어·be동사 생략 분사구문</span></div>
+      <div class="grammar-item"><span class="g-name">◆ be drawn to (수동태: ~로 이끌리다)</span> / ▶ <span class="g-ex">we <b>are drawn to</b> derivatives</span> / ★ <span class="g-point">draw → drawn: 감정·행동의 수동 표현</span></div>
+      <div class="grammar-item"><span class="g-name">◆ 계속적 용법 관계대명사 which</span> / ▶ <span class="g-ex">plant products, <b>which</b> we perceive to be safe</span> / ★ <span class="g-point">콤마+which: 앞 명사에 추가 정보 제공</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ③ 핵심단어 -->
+<div class="tab-panel" data-tab="핵심단어" data-pid="2">
+  <div class="section-title"><span class="icon">📚</span> 핵심단어 및 표현</div>
+  <div class="vocab-item"><span class="v-word">counterproductive</span><span class="v-meaning">역효과를 내는, 생산성을 저해하는</span><span class="v-pos">adj.</span><span class="v-deriv">productive (adj.), productivity (n.)</span></div>
+  <div class="vocab-item"><span class="v-word">ingestion</span><span class="v-meaning">섭취, 삼킴</span><span class="v-pos">n.</span><span class="v-deriv">ingest (v.)</span></div>
+  <div class="vocab-item"><span class="v-word">medicinal</span><span class="v-meaning">약용의, 치료에 쓰이는</span><span class="v-pos">adj.</span><span class="v-deriv">medicine (n.), medicate (v.)</span></div>
+  <div class="vocab-item"><span class="v-word">poisonous</span><span class="v-meaning">독성이 있는, 유독한</span><span class="v-pos">adj.</span><span class="v-deriv">poison (n./v.)</span></div>
+  <div class="vocab-item"><span class="v-word">caution</span><span class="v-meaning">주의, 신중함</span><span class="v-pos">n.</span><span class="v-deriv">cautious (adj.), cautiously (adv.)</span></div>
+  <div class="vocab-item"><span class="v-word">pharmaceutical</span><span class="v-meaning">제약의, 약학의</span><span class="v-pos">adj.</span><span class="v-deriv">pharmacy (n.), pharmacist (n.)</span></div>
+  <div class="vocab-item"><span class="v-word">instinct</span><span class="v-meaning">본능</span><span class="v-pos">n.</span><span class="v-deriv">instinctive (adj.), instinctively (adv.)</span></div>
+  <div class="vocab-item"><span class="v-word">remedy</span><span class="v-meaning">치료제, 해결책</span><span class="v-pos">n.</span><span class="v-deriv">remedial (adj.)</span></div>
+  <div class="vocab-item"><span class="v-word">derivative</span><span class="v-meaning">파생물, 파생된</span><span class="v-pos">n./adj.</span><span class="v-deriv">derive (v.), derivation (n.)</span></div>
+  <div class="vocab-item"><span class="v-word">perceive</span><span class="v-meaning">인식하다, 지각하다</span><span class="v-pos">v.</span><span class="v-deriv">perception (n.), perceptive (adj.)</span></div>
+  <div class="vocab-item"><span class="v-word">artificial</span><span class="v-meaning">인공적인, 인위적인</span><span class="v-pos">adj.</span><span class="v-deriv">artificially (adv.)</span></div>
+  <div class="vocab-item"><span class="v-word">evolutionary</span><span class="v-meaning">진화의, 진화적인</span><span class="v-pos">adj.</span><span class="v-deriv">evolve (v.), evolution (n.)</span></div>
+</div>
+
+<!-- ④ 전문해석 -->
+<div class="tab-panel" data-tab="전문해석" data-pid="2">
+  <div class="section-title"><span class="icon">📖</span> 전문해석</div>
+  <div class="translation-box">
+    왜 인간은 천연 제품의 이점이나 잠재적 해로움에 대한 지식이 없음에도 불구하고 천연 제품을 선호하는 역효과적인 본능을 가지고 있는가? 그 답은 아마도 우리의 유전자에 있을 것이다. 우리 종은 진화 역사의 대부분을 통해 어떤 것을 섭취하는 것이 유익한(즉, 영양가 있거나 약효가 있는) 것인지 아니면 위험한(즉, 독이 있는) 것인지를 판단하기 위해 경험에 크게 의존했다. 우리는 우리를 아프게 하는 식물을 피하고 건강하게 해주는 식물을 선호하는 본능을 진화시켰다. 미지의 것을 매우 신중하게 다루는 것은 엄청난 생존 이점을 제공했다. 오늘날 우리는 자연의 산물이 섭취하기에 안전하다고 믿는다. 하지만 제약 생산 라인에서 나오는 그 알약들은 우리의 본능이 먹기에 안전하다고 말해주는 것과 전혀 닮지 않았다. 그 성분들은 우리에게 고등학교 화학 실험실을 떠올리게 한다. 그럼에도 우리는 그것들을 복용하기를 기대받는다. 따라서 우리는 마치 먼 조상들이 새로운 식물을 대했던 것처럼 그것들을 의심스럽게 대한다. 치료제가 필요할 때, 우리는 과학의 인공적인 산물이 아닌, 우리 음식의 파생물인 식물 제품으로 이끌리며, 이를 안전하다고 인식한다.
+  </div>
+</div>
+
+<!-- ⑤ 주제·요지 -->
+<div class="tab-panel" data-tab="주제요지" data-pid="2">
+  <div class="section-title"><span class="icon">💡</span> 주제·요지·구조</div>
+  <div class="topic-card">
+    <div class="tc-label">THEME · 주제</div>
+    <div class="tc-content">천연 제품을 선호하는 인간의 본능적 성향과 그 진화적 기원</div>
+  </div>
+  <div class="topic-card">
+    <div class="tc-label">MAIN IDEA · 요지</div>
+    <div class="tc-content">인간이 천연 제품을 선호하고 인공 약품을 의심하는 본능은 진화 과정에서 형성된 생존 전략으로, 오늘날에도 소비 행태에 영향을 미친다.</div>
+  </div>
+  <div class="topic-card">
+    <div class="tc-label">STRUCTURE · 구조</div>
+    <div class="tc-content">
+      <div class="structure-step"><span class="step-badge">도입</span><span class="step-text">질문 제기 — 왜 인간은 천연 제품을 본능적으로 선호하는가?</span></div>
+      <div class="structure-step"><span class="step-badge">전개1</span><span class="step-text">진화적 기원 — 경험으로 독성 판별, 신중함이 생존 이점 제공</span></div>
+      <div class="structure-step"><span class="step-badge">전개2</span><span class="step-text">현대 적용 — 제약품은 본능적 안전 기준 불충족, 의심의 대상</span></div>
+      <div class="structure-step"><span class="step-badge">결론</span><span class="step-text">치료 선택 — 본능적으로 식물 파생 제품 선호, 인공 과학 제품 기피</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ⑥ 변형문제 -->
+<div class="tab-panel" data-tab="변형문제" data-pid="2">
+  <div class="section-title"><span class="icon">✏️</span> 변형문제</div>
+
+  <div class="quiz-block" id="q21">
+    <div class="q-num">문항 1</div><div class="q-type">주제 추론</div>
+    <div class="q-text kor">위 글의 주제로 가장 적절한 것은?</div>
+    <ul class="options" id="q21-opts">
+      <li onclick="checkAnswer('2',1,this,false,'제약 산업 비판은 이 글의 주제가 아닙니다.')"><span class="opt-mark">①</span> 제약 산업이 소비자에게 미치는 부정적 영향</li>
+      <li onclick="checkAnswer('2',1,this,false,'식물성 식품의 영양 가치는 이 글의 주제가 아닙니다.')"><span class="opt-mark">②</span> 식물성 식품이 건강에 미치는 영양학적 가치</li>
+      <li onclick="checkAnswer('2',1,this,false,'진화론의 과학적 증거를 다루는 글이 아닙니다.')"><span class="opt-mark">③</span> 인간 진화론의 과학적 증거와 한계</li>
+      <li onclick="checkAnswer('2',1,this,true,'천연 제품 선호 본능의 진화적 기원과 현대 소비 행태에의 영향이 주제입니다.')"><span class="opt-mark">④</span> 천연 제품을 선호하는 진화적 본능과 현대 소비 행태에의 영향</li>
+      <li onclick="checkAnswer('2',1,this,false,'고등학교 화학 교육은 비유적 언급이지 주제가 아닙니다.')"><span class="opt-mark">⑤</span> 고등학교 화학 교육이 약품 인식에 미치는 영향</li>
+    </ul>
+    <div class="feedback-box" id="q21-fb"></div>
+    <button class="reset-btn" id="q21-reset" onclick="resetQuiz('2',1)">↺ 다시 풀기</button>
+  </div>
+
+  <div class="quiz-block" id="q22">
+    <div class="q-num">문항 2</div><div class="q-type">빈칸 추론</div>
+    <div class="q-text">Treating unknowns with great caution provided a terrific survival __________. Today, we trust that products of nature are safe to consume, a result of this same evolved instinct.</div>
+    <ul class="options" id="q22-opts">
+      <li onclick="checkAnswer('2',2,this,false,'threat(위협)는 문맥과 반대입니다.')"><span class="opt-mark">①</span> threat</li>
+      <li onclick="checkAnswer('2',2,this,true,'advantage(이점)가 정답으로, 신중함이 생존 이점을 제공했습니다.')"><span class="opt-mark">②</span> advantage</li>
+      <li onclick="checkAnswer('2',2,this,false,'dilemma(딜레마)는 내용과 맞지 않습니다.')"><span class="opt-mark">③</span> dilemma</li>
+      <li onclick="checkAnswer('2',2,this,false,'obstacle(장애물)는 내용과 반대입니다.')"><span class="opt-mark">④</span> obstacle</li>
+      <li onclick="checkAnswer('2',2,this,false,'challenge(도전)는 문맥에 적합하지 않습니다.')"><span class="opt-mark">⑤</span> challenge</li>
+    </ul>
+    <div class="feedback-box" id="q22-fb"></div>
+    <button class="reset-btn" id="q22-reset" onclick="resetQuiz('2',2)">↺ 다시 풀기</button>
+  </div>
+
+  <div class="quiz-block" id="q23">
+    <div class="q-num">문항 3</div><div class="q-type">어법 오류</div>
+    <div class="q-text">다음 밑줄 친 부분 중 어법상 틀린 것은?<br><br>
+    Our species relied heavily upon <span class="underline-word" onclick="checkUnderline('2',3,this,false,'experience는 rely upon의 목적어로 명사 형태가 올바릅니다.')" data-idx="1">experience</span> to judge whether ingestion of something was beneficial. We evolved the instinct to avoid plants that <span class="underline-word" onclick="checkUnderline('2',3,this,false,'made는 관계절 동사로 과거형이 올바릅니다.')" data-idx="2">made</span> us sick. Those pills coming off a pharmaceutical production line look nothing like <span class="underline-word" onclick="checkUnderline('2',3,this,false,'what은 전치사 like의 목적어이자 관계대명사로 올바릅니다.')" data-idx="3">what</span> our instincts tell us is safe. Thus, we treat them with <span class="underline-word" onclick="checkUnderline('2',3,this,true,'favor(호의)는 문맥상 틀림 → caution/suspicion(신중함/의심)이어야 합니다.')" data-idx="4">favor</span> just as our distant ancestors regarded a new plant. We are drawn to plant products, which we <span class="underline-word" onclick="checkUnderline('2',3,this,false,'perceive는 능동태로 which절의 동사로 올바릅니다.')" data-idx="5">perceive</span> to be safe.
+    </div>
+    <div class="feedback-box" id="q23-fb"></div>
+    <button class="reset-btn" id="q23-reset" onclick="resetUnderline('2',3)">↺ 다시 풀기</button>
+  </div>
+
+  <div class="quiz-block" id="q24">
+    <div class="q-num">문항 4</div><div class="q-type">내용 불일치</div>
+    <div class="q-text kor">위 글의 내용과 일치하지 않는 것은?</div>
+    <ul class="options" id="q24-opts">
+      <li onclick="checkAnswer('2',4,this,false,'인간이 천연 제품을 선호하는 본능이 유전자에 있다고 했습니다.')"><span class="opt-mark">①</span> 천연 제품을 선호하는 인간의 본능은 유전자에서 비롯된다.</li>
+      <li onclick="checkAnswer('2',4,this,false,'우리 종은 경험으로 독성과 영양성을 판별했습니다.')"><span class="opt-mark">②</span> 인간은 진화 과정에서 경험을 통해 식물의 안전성을 판단했다.</li>
+      <li onclick="checkAnswer('2',4,this,true,'제약품을 호의적으로 대한다는 것은 틀린 내용입니다. 본문에서는 의심/경계한다고 했습니다.')"><span class="opt-mark">③</span> 현대인은 제약 생산 라인의 약품을 본능적으로 신뢰하고 선호한다.</li>
+      <li onclick="checkAnswer('2',4,this,false,'제약품 성분이 화학 실험실을 연상시킨다고 했습니다.')"><span class="opt-mark">④</span> 의약품 성분은 고등학교 화학 실험실을 연상시킬 수 있다.</li>
+      <li onclick="checkAnswer('2',4,this,false,'치료제가 필요할 때 식물 파생 제품으로 이끌린다고 했습니다.')"><span class="opt-mark">⑤</span> 치료제가 필요할 때 인간은 식물 파생 제품 쪽으로 이끌리는 경향이 있다.</li>
+    </ul>
+    <div class="feedback-box" id="q24-fb"></div>
+    <button class="reset-btn" id="q24-reset" onclick="resetQuiz('2',4)">↺ 다시 풀기</button>
+  </div>
+
+  <div class="quiz-block" id="q25">
+    <div class="q-num">문항 5</div><div class="q-type">글의 순서</div>
+    <div class="q-text">주어진 글 다음에 이어질 글의 순서로 가장 적절한 것은?<br><br>
+    <b>주어진 글:</b> Why do humans have the counterproductive instinct to favor natural products in the absence of knowledge of their benefits or their potential for harm? The answer likely lies in our genes.<br><br>
+    <b>(A)</b> Today, we trust that products of nature are safe to consume. But those pills coming off a pharmaceutical production line look nothing like what our instincts tell us is safe to eat.<br>
+    <b>(B)</b> Our species, through most of its evolutionary history, relied heavily upon experience to judge whether ingestion of something was beneficial versus whether it was dangerous.<br>
+    <b>(C)</b> When in need of a remedy, we are drawn to derivatives of our food, plant products, which we perceive to be safe, and not artificial products of science.</div>
+    <ul class="options" id="q25-opts">
+      <li onclick="checkAnswer('2',5,this,false,'B에서 진화적 배경 먼저, A에서 현대 적용, C에서 결론이 되어야 합니다.')"><span class="opt-mark">①</span> (A)-(C)-(B)</li>
+      <li onclick="checkAnswer('2',5,this,false,'B → A → C의 순서가 자연스럽습니다.')"><span class="opt-mark">②</span> (C)-(B)-(A)</li>
+      <li onclick="checkAnswer('2',5,this,true,'B(진화적 배경) → A(현대에서의 본능 작용) → C(결과: 식물 제품 선호)의 흐름이 자연스럽습니다.')"><span class="opt-mark">③</span> (B)-(A)-(C)</li>
+      <li onclick="checkAnswer('2',5,this,false,'C는 결론부이므로 가장 마지막에 와야 합니다.')"><span class="opt-mark">④</span> (A)-(B)-(C)</li>
+      <li onclick="checkAnswer('2',5,this,false,'진화적 배경(B)이 가장 먼저 나와야 합니다.')"><span class="opt-mark">⑤</span> (C)-(A)-(B)</li>
+    </ul>
+    <div class="feedback-box" id="q25-fb"></div>
+    <button class="reset-btn" id="q25-reset" onclick="resetQuiz('2',5)">↺ 다시 풀기</button>
+  </div>
+
+  <div class="section-title" style="margin-top:32px"><span class="icon">✍️</span> 서술형</div>
+  <div class="writing-block">
+    <div class="w-label">서술형 1 · 빈칸 요약</div>
+    <div class="w-q">다음 빈칸 (A), (B)에 들어갈 말을 본문에서 찾아 쓰시오.<br><br>
+    Humans evolved to treat (A) <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u> with great caution, which provided a survival advantage, and today this instinct causes people to distrust (B) <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u> products of science.</div>
+    <div class="w-cond">조건: 본문에서 찾아 쓸 것 / (A) 1단어, (B) 1단어</div>
+    <textarea placeholder="답안을 여기에 작성하세요..."></textarea>
+    <button class="answer-toggle" onclick="toggleAnswer(this)">모범답안 보기</button>
+    <div class="model-answer">(A) unknowns&nbsp;&nbsp;&nbsp;(B) artificial</div>
+  </div>
+  <div class="writing-block">
+    <div class="w-label">서술형 2 · 영어 서술</div>
+    <div class="w-q">인간이 제약 의약품보다 식물 파생 제품을 선호하는 이유를 진화적 관점에서 설명하시오.</div>
+    <div class="w-cond">조건: 완전한 영어 문장으로 / 35단어 내외</div>
+    <textarea placeholder="답안을 여기에 작성하세요..."></textarea>
+    <button class="answer-toggle" onclick="toggleAnswer(this)">모범답안 보기</button>
+    <div class="model-answer">Humans evolved the instinct to favor natural, plant-based products because our ancestors relied on experience to judge whether plants were safe or poisonous, making pharmaceutical drugs appear unfamiliar and untrustworthy.</div>
+  </div>
+</div>
+
+</div><!-- end passage-2 -->
+<!-- ═══════════════ PASSAGE 3 ═══════════════ -->
+<div class="passage-block" id="passage-3" style="display:none">
+
+<!-- ① 전문 -->
+<div class="tab-panel active" data-tab="전문" data-pid="3">
+  <div class="passage-header">
+    <span class="passage-id">12-3</span>
+    <span class="passage-title-text">Dietary Supplements vs. Drugs</span>
+    <span class="academy-badge">에듀케레 영수학원 분석지</span>
+  </div>
+  <div class="full-text-box">
+    <div class="ftlabel">FULL TEXT</div>
+    Dietary supplements are not drugs. A drug is intended to diagnose, cure, mitigate, treat, or prevent disease. Before marketing, drugs must undergo extensive studies of effectiveness, safety, interactions with other substances, and dosing. The FDA gives formal premarket ① approval to a drug and monitors its safety after the drug is on the market. If a drug is subsequently shown to be dangerous, the FDA can act quickly to have it removed from the market. None of this is ② true for dietary supplements. The current law gives the FDA only limited authority over supplements. This makes it ③ possible for the government to remove unsafe supplements from the marketplace. The FDA does not evaluate the safety and effectiveness of supplements before they hit the marketplace. There are some legislators in Congress who want to improve the law by ④ requiring supplement makers to put safer products on the shelves and label products more clearly. The objective is to ⑤ ensure that consumers can tell the difference between dietary supplements that are safe and those that have potentially serious side effects or drug interactions.
+  </div>
+</div>
+
+<!-- ② 문장분석 -->
+<div class="tab-panel" data-tab="문장분석" data-pid="3">
+  <div class="section-title"><span class="icon">🔍</span> 문장분석</div>
+
+  <div class="sentence-block">
+    <div class="sent-num">①</div>
+    <div class="eng-box">Dietary supplements are not drugs.</div>
+    <div class="reading-box">
+      <div class="reading-eng">Dietary supplements / are not drugs.</div>
+      <div class="reading-kor">식이 보충제는 / 약이 아니다.</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ 부정문 (주제 제시)</span> / ▶ <span class="g-ex">Dietary supplements <b>are not</b> drugs</span> / ★ <span class="g-point">글의 핵심 전제를 직접 부정문으로 제시 — 수능 글의 도입부 전략</span></div>
+    </div>
+  </div>
+
+  <div class="sentence-block">
+    <div class="sent-num">②</div>
+    <div class="eng-box">A drug is intended to diagnose, cure, mitigate, treat, or prevent disease.</div>
+    <div class="reading-box">
+      <div class="reading-eng">A drug / is intended / to diagnose, cure, mitigate, treat, or prevent disease.</div>
+      <div class="reading-kor">약은 / 의도된다 / 질병을 진단하고, 치료하고, 완화하고, 처치하거나 예방하기 위해.</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ be intended to-V (수동태 + 부정사)</span> / ▶ <span class="g-ex"><b>is intended to</b> diagnose ~</span> / ★ <span class="g-point">~하도록 의도되다: be intended to-V 구조</span></div>
+      <div class="grammar-item"><span class="g-name">◆ to부정사 병렬 (5개 동사)</span> / ▶ <span class="g-ex">to <b>diagnose, cure, mitigate, treat, or prevent</b></span> / ★ <span class="g-point">to 하나에 동사 여러 개 병렬: A, B, C, D, or E</span></div>
+    </div>
+  </div>
+
+  <div class="sentence-block">
+    <div class="sent-num">③</div>
+    <div class="eng-box">Before marketing, drugs must undergo extensive studies of effectiveness, safety, interactions with other substances, and dosing.</div>
+    <div class="reading-box">
+      <div class="reading-eng">Before marketing, / drugs must undergo / extensive studies / of effectiveness, safety, interactions with other substances, and dosing.</div>
+      <div class="reading-kor">시판 전에 / 약은 반드시 거쳐야 한다 / 광범위한 연구를 / 효과, 안전성, 다른 물질과의 상호작용, 복용량에 대한.</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ must undergo (의무 조동사)</span> / ▶ <span class="g-ex">drugs <b>must undergo</b></span> / ★ <span class="g-point">must: 강한 의무 (= have to); 조동사 뒤 동사원형 필수</span></div>
+      <div class="grammar-item"><span class="g-name">◆ 명사 병렬 (4개)</span> / ▶ <span class="g-ex">effectiveness, safety, interactions, <b>and</b> dosing</span> / ★ <span class="g-point">전치사 of 뒤 4개 명사 병렬 — 마지막 앞에 and</span></div>
+    </div>
+  </div>
+
+  <div class="sentence-block">
+    <div class="sent-num">④</div>
+    <div class="eng-box">The FDA gives formal premarket ① approval to a drug and monitors its safety after the drug is on the market.</div>
+    <div class="reading-box">
+      <div class="reading-eng">The FDA / gives formal premarket ① approval to a drug / and monitors its safety / after the drug is on the market.</div>
+      <div class="reading-kor">FDA는 / 약에 공식적인 사전 승인을 부여하고 / 그 안전성을 모니터링한다 / 약이 시장에 나온 후에.</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ 동사 병렬 (gives ~ and monitors)</span> / ▶ <span class="g-ex"><b>gives</b> ~ <b>and monitors</b></span> / ★ <span class="g-point">주어 The FDA에 대한 두 동사 병렬</span></div>
+      <div class="grammar-item"><span class="g-name">◆ 어법: ① approval (명사)</span> / ▶ <span class="g-ex">gives <b>formal premarket ① approval</b></span> / ★ <span class="g-point">gives의 목적어 → 명사 approval 사용 적절</span></div>
+    </div>
+  </div>
+
+  <div class="sentence-block">
+    <div class="sent-num">⑤</div>
+    <div class="eng-box">If a drug is subsequently shown to be dangerous, the FDA can act quickly to have it removed from the market.</div>
+    <div class="reading-box">
+      <div class="reading-eng">If a drug is subsequently shown to be dangerous, / the FDA can act quickly / to have it removed from the market.</div>
+      <div class="reading-kor">만약 약이 이후에 위험한 것으로 밝혀지면 / FDA는 신속하게 조치를 취할 수 있다 / 그것을 시장에서 제거하도록.</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ 조건 부사절 if</span> / ▶ <span class="g-ex"><b>If</b> a drug is subsequently shown</span> / ★ <span class="g-point">if 조건절: 현재시제로 미래 대체</span></div>
+      <div class="grammar-item"><span class="g-name">◆ have + O + 과거분사 (사역 수동)</span> / ▶ <span class="g-ex">to <b>have it removed</b></span> / ★ <span class="g-point">have + 목적어 + p.p.: 목적어가 수동으로 행위를 당함</span></div>
+    </div>
+  </div>
+
+  <div class="sentence-block">
+    <div class="sent-num">⑥</div>
+    <div class="eng-box">None of this is ② true for dietary supplements.</div>
+    <div class="reading-box">
+      <div class="reading-eng">None of this / is ② true for dietary supplements.</div>
+      <div class="reading-kor">이것 중 어느 것도 / 식이 보충제에는 ② 해당되지 않는다.</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ None of + 명사 + 단수동사</span> / ▶ <span class="g-ex"><b>None of this is</b></span> / ★ <span class="g-point">None of + 불가산명사/단수 대명사 → 단수 동사</span></div>
+    </div>
+  </div>
+
+  <div class="sentence-block">
+    <div class="sent-num">⑦</div>
+    <div class="eng-box">The current law gives the FDA only limited authority over supplements.</div>
+    <div class="reading-box">
+      <div class="reading-eng">The current law / gives the FDA / only limited authority / over supplements.</div>
+      <div class="reading-kor">현행법은 / FDA에게 부여한다 / 제한된 권한만을 / 보충제에 대한.</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ 4형식 동사 give (수여동사)</span> / ▶ <span class="g-ex">gives <b>the FDA</b> (IO) <b>limited authority</b> (DO)</span> / ★ <span class="g-point">give + 간접목적어 + 직접목적어: 4형식</span></div>
+    </div>
+  </div>
+
+  <div class="sentence-block">
+    <div class="sent-num">⑧</div>
+    <div class="eng-box">This makes it ③ possible for the government to remove unsafe supplements from the marketplace.</div>
+    <div class="reading-box">
+      <div class="reading-eng">This makes it ③ possible / for the government / to remove unsafe supplements / from the marketplace.</div>
+      <div class="reading-kor">이것은 ③ 가능하게 한다 / 정부가 / 안전하지 않은 보충제를 제거하는 것을 / 시장에서.</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ make it + 형용사 + for A + to-V</span> / ▶ <span class="g-ex">makes <b>it ③ possible for</b> the government <b>to remove</b></span> / ★ <span class="g-point">가목적어 it + 형용사 보어 + 진목적어(to-V) 구조</span></div>
+      <div class="grammar-item"><span class="g-name">◆ 어법 오류: ③ possible → impossible</span> / ▶ <span class="g-ex">makes it <b>③ possible</b> for the government to remove</span> / ★ <span class="g-point">문맥상 FDA 권한이 제한되므로 제거가 '불가능'해야 함 → impossible이 올바름</span></div>
+    </div>
+  </div>
+
+  <div class="sentence-block">
+    <div class="sent-num">⑨</div>
+    <div class="eng-box">The FDA does not evaluate the safety and effectiveness of supplements before they hit the marketplace.</div>
+    <div class="reading-box">
+      <div class="reading-eng">The FDA / does not evaluate / the safety and effectiveness of supplements / before they hit the marketplace.</div>
+      <div class="reading-kor">FDA는 / 평가하지 않는다 / 보충제의 안전성과 효과를 / 그것들이 시장에 출시되기 전에.</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ before + 절 (시간 부사절)</span> / ▶ <span class="g-ex"><b>before</b> they hit the marketplace</span> / ★ <span class="g-point">hit the marketplace: 시장에 나오다 (hit = 원형, 과거, 과거분사 동형)</span></div>
+    </div>
+  </div>
+
+  <div class="sentence-block">
+    <div class="sent-num">⑩</div>
+    <div class="eng-box">There are some legislators in Congress who want to improve the law by ④ requiring supplement makers to put safer products on the shelves and label products more clearly.</div>
+    <div class="reading-box">
+      <div class="reading-eng">There are some legislators in Congress / who want to improve the law / by ④ requiring supplement makers / to put safer products on the shelves / and label products more clearly.</div>
+      <div class="reading-kor">의회에는 일부 입법자들이 있다 / 법을 개선하기를 원하는 / ④ 보충제 제조업체들이 요구되도록 / 더 안전한 제품을 진열대에 올려놓고 / 더 명확하게 라벨을 붙이도록.</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ by + 동명사 (수단의 전치사)</span> / ▶ <span class="g-ex"><b>by ④ requiring</b> supplement makers</span> / ★ <span class="g-point">by + V-ing: ~함으로써 (수단·방법)</span></div>
+      <div class="grammar-item"><span class="g-name">◆ require + O + to-V</span> / ▶ <span class="g-ex">requiring makers <b>to put</b> ~ and <b>label</b></span> / ★ <span class="g-point">require + 목적어 + to-V; to put and (to) label 병렬</span></div>
+    </div>
+  </div>
+
+  <div class="sentence-block">
+    <div class="sent-num">⑪</div>
+    <div class="eng-box">The objective is to ⑤ ensure that consumers can tell the difference between dietary supplements that are safe and those that have potentially serious side effects or drug interactions.</div>
+    <div class="reading-box">
+      <div class="reading-eng">The objective / is to ⑤ ensure / that consumers can tell the difference / between dietary supplements that are safe / and those that have potentially serious side effects or drug interactions.</div>
+      <div class="reading-kor">목표는 / ⑤ 보장하는 것이다 / 소비자들이 차이를 알 수 있도록 / 안전한 식이 보충제와 / 심각한 부작용이나 약물 상호작용이 있는 것들 사이의.</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ 주격보어 to-V</span> / ▶ <span class="g-ex">The objective <b>is to ⑤ ensure</b></span> / ★ <span class="g-point">is의 보어로 to-V 사용: 주어 = 목적</span></div>
+      <div class="grammar-item"><span class="g-name">◆ tell the difference between A and B</span> / ▶ <span class="g-ex"><b>tell the difference between</b> ~ safe <b>and</b> those ~</span> / ★ <span class="g-point">구별하다: tell the difference between A and B</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ③ 핵심단어 -->
+<div class="tab-panel" data-tab="핵심단어" data-pid="3">
+  <div class="section-title"><span class="icon">📚</span> 핵심단어 및 표현</div>
+  <div class="vocab-item"><span class="v-word">dietary supplement</span><span class="v-meaning">식이 보충제</span><span class="v-pos">n. phr.</span><span class="v-deriv">diet (n.), dietary (adj.)</span></div>
+  <div class="vocab-item"><span class="v-word">mitigate</span><span class="v-meaning">완화하다, 경감하다</span><span class="v-pos">v.</span><span class="v-deriv">mitigation (n.)</span></div>
+  <div class="vocab-item"><span class="v-word">undergo</span><span class="v-meaning">겪다, 받다</span><span class="v-pos">v.</span><span class="v-deriv">—</span></div>
+  <div class="vocab-item"><span class="v-word">premarket</span><span class="v-meaning">시판 전의</span><span class="v-pos">adj.</span><span class="v-deriv">market (n.), marketing (n.)</span></div>
+  <div class="vocab-item"><span class="v-word">approval</span><span class="v-meaning">승인, 허가</span><span class="v-pos">n.</span><span class="v-deriv">approve (v.), approved (adj.)</span></div>
+  <div class="vocab-item"><span class="v-word">subsequently</span><span class="v-meaning">이후에, 그 다음에</span><span class="v-pos">adv.</span><span class="v-deriv">subsequent (adj.)</span></div>
+  <div class="vocab-item"><span class="v-word">authority</span><span class="v-meaning">권한, 당국</span><span class="v-pos">n.</span><span class="v-deriv">authorize (v.), authoritative (adj.)</span></div>
+  <div class="vocab-item"><span class="v-word">marketplace</span><span class="v-meaning">시장</span><span class="v-pos">n.</span><span class="v-deriv">market (n./v.)</span></div>
+  <div class="vocab-item"><span class="v-word">legislator</span><span class="v-meaning">입법자, 국회의원</span><span class="v-pos">n.</span><span class="v-deriv">legislate (v.), legislation (n.)</span></div>
+  <div class="vocab-item"><span class="v-word">side effect</span><span class="v-meaning">부작용</span><span class="v-pos">n. phr.</span><span class="v-deriv">—</span></div>
+  <div class="vocab-item"><span class="v-word">interaction</span><span class="v-meaning">상호작용</span><span class="v-pos">n.</span><span class="v-deriv">interact (v.), interactive (adj.)</span></div>
+  <div class="vocab-item"><span class="v-word">ensure</span><span class="v-meaning">보장하다, 확실히 하다</span><span class="v-pos">v.</span><span class="v-deriv">—</span></div>
+</div>
+
+<!-- ④ 전문해석 -->
+<div class="tab-panel" data-tab="전문해석" data-pid="3">
+  <div class="section-title"><span class="icon">📖</span> 전문해석</div>
+  <div class="translation-box">
+    식이 보충제는 약이 아니다. 약은 질병을 진단하고, 치료하고, 완화하고, 처치하거나 예방하기 위해 의도된다. 시판 전에 약은 효과, 안전성, 다른 물질과의 상호작용, 복용량에 관한 광범위한 연구를 반드시 거쳐야 한다. FDA는 약에 공식적인 사전 시판 승인을 부여하고 약이 시장에 나온 이후에도 그 안전성을 모니터링한다. 만약 약이 이후에 위험한 것으로 밝혀지면, FDA는 신속하게 조치를 취해 그것을 시장에서 제거할 수 있다. 하지만 이것 중 어느 것도 식이 보충제에는 해당되지 않는다. 현행법은 FDA에게 보충제에 대한 제한된 권한만을 부여한다. 이 때문에 정부가 안전하지 않은 보충제를 시장에서 제거하는 것이 불가능해진다. FDA는 보충제가 시장에 출시되기 전에 그 안전성과 효과를 평가하지 않는다. 의회에는 보충제 제조업체들이 더 안전한 제품을 진열대에 올려놓고 더 명확하게 라벨을 붙이도록 요구하여 법을 개선하기를 원하는 일부 입법자들이 있다. 목표는 소비자들이 안전한 식이 보충제와 심각한 부작용이나 약물 상호작용이 있을 가능성이 있는 것들 사이의 차이를 알 수 있도록 보장하는 것이다.
+  </div>
+</div>
+
+<!-- ⑤ 주제·요지 -->
+<div class="tab-panel" data-tab="주제요지" data-pid="3">
+  <div class="section-title"><span class="icon">💡</span> 주제·요지·구조</div>
+  <div class="topic-card">
+    <div class="tc-label">THEME · 주제</div>
+    <div class="tc-content">식이 보충제와 의약품의 FDA 규제 차이와 소비자 안전 보호의 필요성</div>
+  </div>
+  <div class="topic-card">
+    <div class="tc-label">MAIN IDEA · 요지</div>
+    <div class="tc-content">식이 보충제는 의약품과 달리 FDA의 사전 심사를 받지 않아 소비자 안전이 취약하며, 입법을 통한 규제 강화가 필요하다.</div>
+  </div>
+  <div class="topic-card">
+    <div class="tc-label">STRUCTURE · 구조</div>
+    <div class="tc-content">
+      <div class="structure-step"><span class="step-badge">도입</span><span class="step-text">의약품 정의 및 FDA의 엄격한 사전 승인 절차</span></div>
+      <div class="structure-step"><span class="step-badge">전개1</span><span class="step-text">보충제와의 대비 — FDA 권한 제한, 사전 안전성 평가 없음</span></div>
+      <div class="structure-step"><span class="step-badge">전개2</span><span class="step-text">입법 노력 — 의회 의원들의 법 개선 시도</span></div>
+      <div class="structure-step"><span class="step-badge">결론</span><span class="step-text">목표: 소비자가 안전·위험 보충제 구별 가능하도록 보장</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ⑥ 변형문제 -->
+<div class="tab-panel" data-tab="변형문제" data-pid="3">
+  <div class="section-title"><span class="icon">✏️</span> 변형문제</div>
+
+  <div class="quiz-block" id="q31">
+    <div class="q-num">문항 1</div><div class="q-type">주제 추론</div>
+    <div class="q-text kor">위 글의 주제로 가장 적절한 것은?</div>
+    <ul class="options" id="q31-opts">
+      <li onclick="checkAnswer('3',1,this,false,'FDA 설립 역사는 이 글에서 다루지 않습니다.')"><span class="opt-mark">①</span> FDA 설립 역사와 의약품 규제의 발전</li>
+      <li onclick="checkAnswer('3',1,this,false,'보충제 제조 과정은 이 글의 주제가 아닙니다.')"><span class="opt-mark">②</span> 식이 보충제 제조 과정과 성분 분석</li>
+      <li onclick="checkAnswer('3',1,this,true,'보충제와 의약품의 규제 차이와 소비자 보호 필요성이 주제입니다.')"><span class="opt-mark">③</span> 의약품과 식이 보충제 간의 FDA 규제 차이와 소비자 안전 보호</li>
+      <li onclick="checkAnswer('3',1,this,false,'의회 제도 전반을 논하는 글이 아닙니다.')"><span class="opt-mark">④</span> 미국 의회 입법 절차의 복잡성과 개선 방향</li>
+      <li onclick="checkAnswer('3',1,this,false,'임상 실험 방법을 다루는 글이 아닙니다.')"><span class="opt-mark">⑤</span> 임상 실험 방법이 의약품 효능 검증에 미치는 영향</li>
+    </ul>
+    <div class="feedback-box" id="q31-fb"></div>
+    <button class="reset-btn" id="q31-reset" onclick="resetQuiz('3',1)">↺ 다시 풀기</button>
+  </div>
+
+  <div class="quiz-block" id="q32">
+    <div class="q-num">문항 2</div><div class="q-type">빈칸 추론</div>
+    <div class="q-text">The current law gives the FDA only limited authority over supplements. This makes it __________ for the government to remove unsafe supplements from the marketplace.</div>
+    <ul class="options" id="q32-opts">
+      <li onclick="checkAnswer('3',2,this,false,'easy(쉬운)은 문맥과 반대입니다. FDA 권한이 제한되어 있습니다.')"><span class="opt-mark">①</span> easy</li>
+      <li onclick="checkAnswer('3',2,this,false,'necessary(필요한)는 문맥에 적합하지 않습니다.')"><span class="opt-mark">②</span> necessary</li>
+      <li onclick="checkAnswer('3',2,this,true,'impossible(불가능한)이 정답으로, FDA 권한 제한으로 보충제 제거가 불가능합니다.')"><span class="opt-mark">③</span> impossible</li>
+      <li onclick="checkAnswer('3',2,this,false,'mandatory(의무적인)는 내용과 다릅니다.')"><span class="opt-mark">④</span> mandatory</li>
+      <li onclick="checkAnswer('3',2,this,false,'beneficial(유익한)은 맥락에 맞지 않습니다.')"><span class="opt-mark">⑤</span> beneficial</li>
+    </ul>
+    <div class="feedback-box" id="q32-fb"></div>
+    <button class="reset-btn" id="q32-reset" onclick="resetQuiz('3',2)">↺ 다시 풀기</button>
+  </div>
+
+  <div class="quiz-block" id="q33">
+    <div class="q-num">문항 3</div><div class="q-type">어법 오류</div>
+    <div class="q-text">다음 밑줄 친 부분 중 어법상 틀린 것은?<br><br>
+    A drug is intended <span class="underline-word" onclick="checkUnderline('3',3,this,false,'to diagnose는 be intended to-V 구조로 올바릅니다.')" data-idx="1">to diagnose</span>, cure, mitigate, treat, or prevent disease. The FDA gives formal premarket approval to a drug and <span class="underline-word" onclick="checkUnderline('3',3,this,false,'monitors는 gives와 병렬로 연결된 동사로 올바릅니다.')" data-idx="2">monitors</span> its safety. None of this is <span class="underline-word" onclick="checkUnderline('3',3,this,false,'true는 is의 보어로 형용사 형태가 올바릅니다.')" data-idx="3">true</span> for dietary supplements. This makes it <span class="underline-word" onclick="checkUnderline('3',3,this,true,'possible(가능한)은 문맥상 틀림 → impossible(불가능한)이어야 합니다. FDA 권한이 제한되어 제거가 불가능합니다.')" data-idx="4">possible</span> for the government to remove unsafe supplements. There are legislators who want to improve the law by <span class="underline-word" onclick="checkUnderline('3',3,this,false,'requiring는 by 뒤의 동명사로 올바릅니다.')" data-idx="5">requiring</span> supplement makers to put safer products on the shelves.
+    </div>
+    <div class="feedback-box" id="q33-fb"></div>
+    <button class="reset-btn" id="q33-reset" onclick="resetUnderline('3',3)">↺ 다시 풀기</button>
+  </div>
+
+  <div class="quiz-block" id="q34">
+    <div class="q-num">문항 4</div><div class="q-type">내용 불일치</div>
+    <div class="q-text kor">위 글의 내용과 일치하지 않는 것은?</div>
+    <ul class="options" id="q34-opts">
+      <li onclick="checkAnswer('3',4,this,false,'약은 시판 전에 광범위한 연구를 거쳐야 한다고 했습니다.')"><span class="opt-mark">①</span> 의약품은 시판 전에 효과, 안전성 등에 관한 광범위한 연구를 받아야 한다.</li>
+      <li onclick="checkAnswer('3',4,this,false,'FDA는 위험한 약을 신속히 시장에서 제거할 수 있습니다.')"><span class="opt-mark">②</span> FDA는 위험한 것으로 드러난 의약품을 시장에서 신속하게 제거할 수 있다.</li>
+      <li onclick="checkAnswer('3',4,this,true,'현행법은 FDA에게 보충제에 대한 제한된 권한만을 부여한다고 했습니다. 광범위한 권한은 불일치.')"><span class="opt-mark">③</span> 현행법은 FDA에게 보충제에 대한 광범위한 규제 권한을 부여하고 있다.</li>
+      <li onclick="checkAnswer('3',4,this,false,'FDA는 보충제를 사전에 평가하지 않는다고 명시되었습니다.')"><span class="opt-mark">④</span> FDA는 보충제가 시장에 출시되기 전에 안전성과 효과를 평가하지 않는다.</li>
+      <li onclick="checkAnswer('3',4,this,false,'목표는 소비자가 안전·위험 보충제를 구별하도록 하는 것입니다.')"><span class="opt-mark">⑤</span> 입법자들의 목표는 소비자가 안전한 보충제와 위험한 보충제를 구별할 수 있도록 하는 것이다.</li>
+    </ul>
+    <div class="feedback-box" id="q34-fb"></div>
+    <button class="reset-btn" id="q34-reset" onclick="resetQuiz('3',4)">↺ 다시 풀기</button>
+  </div>
+
+  <div class="quiz-block" id="q35">
+    <div class="q-num">문항 5</div><div class="q-type">글의 순서</div>
+    <div class="q-text">주어진 글 다음에 이어질 글의 순서로 가장 적절한 것은?<br><br>
+    <b>주어진 글:</b> Dietary supplements are not drugs. A drug is intended to diagnose, cure, mitigate, treat, or prevent disease. Before marketing, drugs must undergo extensive studies of effectiveness, safety, interactions with other substances, and dosing.<br><br>
+    <b>(A)</b> None of this is true for dietary supplements. The current law gives the FDA only limited authority over supplements, making it impossible for the government to remove unsafe ones.<br>
+    <b>(B)</b> The FDA gives formal premarket approval to a drug and monitors its safety after the drug is on the market. If a drug is subsequently shown to be dangerous, the FDA can act quickly to have it removed.<br>
+    <b>(C)</b> There are some legislators in Congress who want to improve the law by requiring supplement makers to put safer products on the shelves. The objective is to ensure that consumers can tell the difference between safe and dangerous supplements.</div>
+    <ul class="options" id="q35-opts">
+      <li onclick="checkAnswer('3',5,this,false,'B에서 FDA 역할 설명 후, A에서 보충제와 대조, C에서 해결책 제시가 자연스럽습니다.')"><span class="opt-mark">①</span> (A)-(B)-(C)</li>
+      <li onclick="checkAnswer('3',5,this,false,'C는 해결책이므로 A가 문제를 제시한 후에 와야 합니다.')"><span class="opt-mark">②</span> (A)-(C)-(B)</li>
+      <li onclick="checkAnswer('3',5,this,true,'B(FDA의 약 규제) → A(보충제는 해당 없음) → C(입법 해결책)의 흐름이 자연스럽습니다.')"><span class="opt-mark">③</span> (B)-(A)-(C)</li>
+      <li onclick="checkAnswer('3',5,this,false,'C는 결론이므로 마지막에 와야 합니다.')"><span class="opt-mark">④</span> (C)-(A)-(B)</li>
+      <li onclick="checkAnswer('3',5,this,false,'B가 먼저 FDA의 약 규제를 설명해야 A의 대조가 의미있습니다.')"><span class="opt-mark">⑤</span> (C)-(B)-(A)</li>
+    </ul>
+    <div class="feedback-box" id="q35-fb"></div>
+    <button class="reset-btn" id="q35-reset" onclick="resetQuiz('3',5)">↺ 다시 풀기</button>
+  </div>
+
+  <div class="section-title" style="margin-top:32px"><span class="icon">✍️</span> 서술형</div>
+  <div class="writing-block">
+    <div class="w-label">서술형 1 · 빈칸 요약</div>
+    <div class="w-q">다음 빈칸 (A), (B)에 들어갈 말을 본문에서 찾아 쓰시오.<br><br>
+    Unlike drugs that receive formal (A) <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u> from the FDA, dietary supplements face only (B) <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u> regulatory oversight, posing risks to consumers.</div>
+    <div class="w-cond">조건: 본문에서 찾아 쓸 것 / 각 1단어</div>
+    <textarea placeholder="답안을 여기에 작성하세요..."></textarea>
+    <button class="answer-toggle" onclick="toggleAnswer(this)">모범답안 보기</button>
+    <div class="model-answer">(A) approval&nbsp;&nbsp;&nbsp;(B) limited</div>
+  </div>
+  <div class="writing-block">
+    <div class="w-label">서술형 2 · 영어 서술</div>
+    <div class="w-q">식이 보충제와 의약품이 FDA 규제에서 어떻게 다른지 설명하시오.</div>
+    <div class="w-cond">조건: 완전한 영어 문장으로 / 35단어 내외</div>
+    <textarea placeholder="답안을 여기에 작성하세요..."></textarea>
+    <button class="answer-toggle" onclick="toggleAnswer(this)">모범답안 보기</button>
+    <div class="model-answer">Unlike drugs, which must receive formal FDA approval and undergo extensive safety studies before being marketed, dietary supplements face only limited FDA oversight and are not evaluated for safety or effectiveness before reaching consumers.</div>
+  </div>
+</div>
+
+</div><!-- end passage-3 -->
+<!-- ═══════════════ PASSAGE 4 ═══════════════ -->
+<div class="passage-block" id="passage-4" style="display:none">
+
+<!-- ① 전문 -->
+<div class="tab-panel active" data-tab="전문" data-pid="4">
+  <div class="passage-header">
+    <span class="passage-id">12-4</span>
+    <span class="passage-title-text">Literature's Living Meaning</span>
+    <span class="academy-badge">에듀케레 영수학원 분석지</span>
+  </div>
+  <div class="full-text-box">
+    <div class="ftlabel">FULL TEXT</div>
+    Literature is not a disposable carrier of nuggets of information. Literature (as opposed to everyday reading) ① invites us back again and again to re-experience what it offers and to reassess its meanings. Literature continues to communicate meaning and significance over time, and, most remarkably, to ② shift its meaning based on our perspective. We have all had the experience of taking up a classic work of literature after several years and finding in it details and significance we ③ missed the first (or fifth) time through. What has changed is not the work of literature exactly but our experiences that are now reflected in the text. One's perception of Shakespeare's grand drama on aging under existential threat, King Lear, is a different experience read in one's twenties than it is in one's seventies. This is true because reading literature, as opposed to everyday reading, requires full reader ④ participation, activating not just our informational processing skills but our analysis, imagination, and emotions. These change over time in every person, and those changes explain how works of literature are more ⑤ invariable than everyday reading.
+  </div>
+</div>
+
+<!-- ② 문장분석 -->
+<div class="tab-panel" data-tab="문장분석" data-pid="4">
+  <div class="section-title"><span class="icon">🔍</span> 문장분석</div>
+
+  <div class="sentence-block">
+    <div class="sent-num">①</div>
+    <div class="eng-box">Literature is not a disposable carrier of nuggets of information.</div>
+    <div class="reading-box">
+      <div class="reading-eng">Literature / is not / a disposable carrier / of nuggets of information.</div>
+      <div class="reading-kor">문학은 / 아니다 / 일회용 전달 수단이 / 정보 덩어리들의.</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ 부정 명제 제시 (글의 도입)</span> / ▶ <span class="g-ex">Literature <b>is not</b> a disposable carrier</span> / ★ <span class="g-point">역설적 부정으로 글을 시작 — 수능 글의 서론 전략 주의</span></div>
+      <div class="grammar-item"><span class="g-name">◆ 전치사구의 명사 수식 (of + 명사)</span> / ▶ <span class="g-ex">nuggets <b>of</b> information</span> / ★ <span class="g-point">of는 '~의'라는 소유·내용 관계 표현</span></div>
+    </div>
+  </div>
+
+  <div class="sentence-block">
+    <div class="sent-num">②</div>
+    <div class="eng-box">Literature (as opposed to everyday reading) ① invites us back again and again to re-experience what it offers and to reassess its meanings.</div>
+    <div class="reading-box">
+      <div class="reading-eng">Literature / (as opposed to everyday reading) / ① invites us back again and again / to re-experience what it offers / and to reassess its meanings.</div>
+      <div class="reading-kor">문학은 / (일상적인 독서와는 달리) / ① 우리를 거듭거듭 다시 불러들인다 / 그것이 제공하는 것을 재경험하기 위해 / 그리고 그 의미를 재평가하기 위해.</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ as opposed to (대조 표현)</span> / ▶ <span class="g-ex"><b>as opposed to</b> everyday reading</span> / ★ <span class="g-point">= in contrast to / unlike: 반대 상황 대조</span></div>
+      <div class="grammar-item"><span class="g-name">◆ invite + O + to-V (권유·유도)</span> / ▶ <span class="g-ex">invites us <b>to re-experience</b> ~ and <b>to reassess</b></span> / ★ <span class="g-point">invite + 목적어 + to-V (5형식); to-V 두 개 병렬</span></div>
+      <div class="grammar-item"><span class="g-name">◆ 관계대명사 what (선행사 포함)</span> / ▶ <span class="g-ex">re-experience <b>what</b> it offers</span> / ★ <span class="g-point">what = the thing that; 동사 re-experience의 목적어</span></div>
+    </div>
+  </div>
+
+  <div class="sentence-block">
+    <div class="sent-num">③</div>
+    <div class="eng-box">Literature continues to communicate meaning and significance over time, and, most remarkably, to ② shift its meaning based on our perspective.</div>
+    <div class="reading-box">
+      <div class="reading-eng">Literature / continues to communicate meaning and significance over time, / and, most remarkably, / to ② shift its meaning / based on our perspective.</div>
+      <div class="reading-kor">문학은 / 시간이 지나도 의미와 중요성을 계속 전달하고 / 가장 놀랍게도 / ② 그 의미를 변화시킨다 / 우리의 관점에 따라.</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ continue to-V (계속하다)</span> / ▶ <span class="g-ex">continues <b>to communicate</b> ~ and to shift</span> / ★ <span class="g-point">continue + to-V (또는 V-ing): 동사 뒤 to-V 병렬</span></div>
+      <div class="grammar-item"><span class="g-name">◆ based on (전치사구: ~에 기반하여)</span> / ▶ <span class="g-ex"><b>based on</b> our perspective</span> / ★ <span class="g-point">based on = according to / depending on: 근거 표현</span></div>
+    </div>
+  </div>
+
+  <div class="sentence-block">
+    <div class="sent-num">④</div>
+    <div class="eng-box">We have all had the experience of taking up a classic work of literature after several years and finding in it details and significance we ③ missed the first (or fifth) time through.</div>
+    <div class="reading-box">
+      <div class="reading-eng">We have all had the experience / of taking up a classic work of literature / after several years / and finding in it details and significance / we ③ missed the first (or fifth) time through.</div>
+      <div class="reading-kor">우리 모두는 경험을 해봤다 / 고전 문학 작품을 다시 집어 드는 / 몇 년 후에 / 그리고 그 안에서 세부 사항과 의미를 발견하는 / 우리가 ③ 처음(또는 다섯 번째) 읽을 때 놓쳤던.</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ have had the experience of + 동명사</span> / ▶ <span class="g-ex">have had the experience <b>of taking up</b></span> / ★ <span class="g-point">전치사 of 뒤 동명사; 현재완료로 보편적 경험 표현</span></div>
+      <div class="grammar-item"><span class="g-name">◆ 목적격 관계대명사 생략</span> / ▶ <span class="g-ex">significance [(that) we ③ missed]</span> / ★ <span class="g-point">관계대명사 that 생략; missed의 목적어 역할</span></div>
+    </div>
+  </div>
+
+  <div class="sentence-block">
+    <div class="sent-num">⑤</div>
+    <div class="eng-box">What has changed is not the work of literature exactly but our experiences that are now reflected in the text.</div>
+    <div class="reading-box">
+      <div class="reading-eng">What has changed / is not the work of literature exactly / but our experiences / that are now reflected in the text.</div>
+      <div class="reading-kor">변한 것은 / 정확히 문학 작품이 아니라 / 우리의 경험들이다 / 이제 그 텍스트에 반영된.</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ not A but B (A가 아니라 B)</span> / ▶ <span class="g-ex">is <b>not</b> the work <b>but</b> our experiences</span> / ★ <span class="g-point">not A but B: 수능 빈칸 단골 병렬 구조</span></div>
+      <div class="grammar-item"><span class="g-name">◆ 관계대명사 that (주격)</span> / ▶ <span class="g-ex">our experiences <b>that</b> are now reflected</span> / ★ <span class="g-point">that절이 our experiences를 수식; 수동태 are reflected</span></div>
+    </div>
+  </div>
+
+  <div class="sentence-block">
+    <div class="sent-num">⑥</div>
+    <div class="eng-box">One's perception of Shakespeare's grand drama on aging under existential threat, King Lear, is a different experience read in one's twenties than it is in one's seventies.</div>
+    <div class="reading-box">
+      <div class="reading-eng">One's perception of Shakespeare's grand drama / on aging under existential threat, King Lear, / is a different experience / read in one's twenties / than it is in one's seventies.</div>
+      <div class="reading-kor">셰익스피어의 웅장한 드라마에 대한 인식은 / 실존적 위협 아래 노화를 다룬 '리어왕' / 다른 경험이다 / 20대에 읽을 때와 / 70대에 읽을 때가.</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ 비교급 구조 (different ~ than)</span> / ▶ <span class="g-ex">a <b>different</b> experience ~ <b>than</b> it is</span> / ★ <span class="g-point">different A than B: A와 B가 다름을 표현 (different from도 가능)</span></div>
+      <div class="grammar-item"><span class="g-name">◆ 동격 표현 (콤마 + 고유명사)</span> / ▶ <span class="g-ex">grand drama ~, <b>King Lear</b></span> / ★ <span class="g-point">앞 명사구를 구체화하는 동격</span></div>
+    </div>
+  </div>
+
+  <div class="sentence-block">
+    <div class="sent-num">⑦</div>
+    <div class="eng-box">This is true because reading literature, as opposed to everyday reading, requires full reader ④ participation, activating not just our informational processing skills but our analysis, imagination, and emotions.</div>
+    <div class="reading-box">
+      <div class="reading-eng">This is true because / reading literature, as opposed to everyday reading, / requires full reader ④ participation, / activating not just our informational processing skills / but our analysis, imagination, and emotions.</div>
+      <div class="reading-kor">이것이 사실인 이유는 / 문학 읽기는, 일상적 독서와 달리, / 독자의 완전한 ④ 참여를 요구하기 때문이다 / 우리의 정보 처리 능력만이 아니라 / 우리의 분석, 상상력, 감정을 활성화하면서.</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ not just A but B (A만이 아니라 B도)</span> / ▶ <span class="g-ex"><b>not just</b> processing skills <b>but</b> analysis, imagination, emotions</span> / ★ <span class="g-point">= not only A but also B: 확장 표현</span></div>
+      <div class="grammar-item"><span class="g-name">◆ 분사구문 (결과·동시동작)</span> / ▶ <span class="g-ex"><b>activating</b> not just ~ but ~</span> / ★ <span class="g-point">주절 동작의 부수적 결과를 현재분사구로 표현</span></div>
+    </div>
+  </div>
+
+  <div class="sentence-block">
+    <div class="sent-num">⑧</div>
+    <div class="eng-box">These change over time in every person, and those changes explain how works of literature are more ⑤ invariable than everyday reading.</div>
+    <div class="reading-box">
+      <div class="reading-eng">These change over time in every person, / and those changes explain / how works of literature are more ⑤ invariable / than everyday reading.</div>
+      <div class="reading-kor">이것들은 모든 사람에게 시간이 지남에 따라 변하고 / 그 변화들이 설명한다 / 문학 작품들이 어떻게 ⑤ 더 변치 않는지를 / 일상적 독서보다. [→ 문맥상: 더 variable/변화하는이어야 함]</div>
+    </div>
+    <div class="grammar-items">
+      <div class="grammar-item"><span class="g-name">◆ 간접의문문 how</span> / ▶ <span class="g-ex">explain <b>how</b> works of literature are</span> / ★ <span class="g-point">how절이 explain의 목적어; 어순: how + S + V</span></div>
+      <div class="grammar-item"><span class="g-name">◆ 어법 오류: ⑤ invariable → variable</span> / ▶ <span class="g-ex">more <b>⑤ invariable</b> than everyday reading</span> / ★ <span class="g-point">독자의 경험이 변하므로 문학의 의미도 '변한다' → variable(가변적인)이어야 함; invariable(불변의)은 의미 오류</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ③ 핵심단어 -->
+<div class="tab-panel" data-tab="핵심단어" data-pid="4">
+  <div class="section-title"><span class="icon">📚</span> 핵심단어 및 표현</div>
+  <div class="vocab-item"><span class="v-word">disposable</span><span class="v-meaning">일회용의, 처분 가능한</span><span class="v-pos">adj.</span><span class="v-deriv">dispose (v.), disposal (n.)</span></div>
+  <div class="vocab-item"><span class="v-word">nugget</span><span class="v-meaning">작은 덩어리, 귀중한 정보</span><span class="v-pos">n.</span><span class="v-deriv">—</span></div>
+  <div class="vocab-item"><span class="v-word">reassess</span><span class="v-meaning">재평가하다</span><span class="v-pos">v.</span><span class="v-deriv">assess (v.), assessment (n.)</span></div>
+  <div class="vocab-item"><span class="v-word">significance</span><span class="v-meaning">중요성, 의의</span><span class="v-pos">n.</span><span class="v-deriv">significant (adj.), significantly (adv.)</span></div>
+  <div class="vocab-item"><span class="v-word">perspective</span><span class="v-meaning">관점, 시각</span><span class="v-pos">n.</span><span class="v-deriv">perspectival (adj.)</span></div>
+  <div class="vocab-item"><span class="v-word">take up</span><span class="v-meaning">(책 등을) 다시 집어 들다, 시작하다</span><span class="v-pos">v. phr.</span><span class="v-deriv">—</span></div>
+  <div class="vocab-item"><span class="v-word">existential</span><span class="v-meaning">실존적인, 존재에 관한</span><span class="v-pos">adj.</span><span class="v-deriv">exist (v.), existence (n.)</span></div>
+  <div class="vocab-item"><span class="v-word">perception</span><span class="v-meaning">인식, 지각</span><span class="v-pos">n.</span><span class="v-deriv">perceive (v.), perceptive (adj.)</span></div>
+  <div class="vocab-item"><span class="v-word">participation</span><span class="v-meaning">참여, 관여</span><span class="v-pos">n.</span><span class="v-deriv">participate (v.), participant (n.)</span></div>
+  <div class="vocab-item"><span class="v-word">activate</span><span class="v-meaning">활성화하다, 작동시키다</span><span class="v-pos">v.</span><span class="v-deriv">active (adj.), activation (n.)</span></div>
+  <div class="vocab-item"><span class="v-word">invariable</span><span class="v-meaning">불변의, 항상 같은</span><span class="v-pos">adj.</span><span class="v-deriv">variable (adj.), vary (v.), variation (n.)</span></div>
+  <div class="vocab-item"><span class="v-word">as opposed to</span><span class="v-meaning">~와는 대조적으로, ~와 달리</span><span class="v-pos">prep. phr.</span><span class="v-deriv">oppose (v.), opposition (n.)</span></div>
+</div>
+
+<!-- ④ 전문해석 -->
+<div class="tab-panel" data-tab="전문해석" data-pid="4">
+  <div class="section-title"><span class="icon">📖</span> 전문해석</div>
+  <div class="translation-box">
+    문학은 정보 덩어리들의 일회용 전달 수단이 아니다. 문학은 (일상적인 독서와는 달리) 우리를 거듭거듭 다시 불러들여 그것이 제공하는 것을 재경험하고 그 의미를 재평가하게 한다. 문학은 시간이 지나도 계속 의미와 중요성을 전달하며, 가장 놀랍게도, 우리의 관점에 따라 그 의미를 변화시킨다. 우리 모두는 몇 년 후 고전 문학 작품을 다시 집어 들었을 때 처음(또는 다섯 번째) 읽을 때 놓쳤던 세부 사항과 의미를 발견하는 경험을 해봤다. 변한 것은 정확히 문학 작품이 아니라 이제 그 텍스트에 반영된 우리 자신의 경험들이다. 실존적 위협 아래 노화를 다룬 셰익스피어의 웅장한 드라마 『리어왕』에 대한 인식은 20대에 읽을 때와 70대에 읽을 때가 다른 경험이다. 이것이 사실인 이유는 문학 읽기가, 일상적인 독서와 달리, 독자의 완전한 참여를 요구하며, 우리의 정보 처리 능력만이 아니라 분석, 상상력, 감정을 활성화하기 때문이다. 이것들은 모든 사람에게 시간이 지남에 따라 변하며, 그 변화들이 문학 작품들이 일상적인 독서보다 더 가변적인 이유를 설명해준다.
+  </div>
+</div>
+
+<!-- ⑤ 주제·요지 -->
+<div class="tab-panel" data-tab="주제요지" data-pid="4">
+  <div class="section-title"><span class="icon">💡</span> 주제·요지·구조</div>
+  <div class="topic-card">
+    <div class="tc-label">THEME · 주제</div>
+    <div class="tc-content">독자의 경험 변화에 따라 의미가 달라지는 문학의 살아있는 특성</div>
+  </div>
+  <div class="topic-card">
+    <div class="tc-label">MAIN IDEA · 요지</div>
+    <div class="tc-content">문학은 일회용 정보 전달이 아니라 독자의 참여와 경험에 따라 의미가 달라지는 살아있는 텍스트로, 같은 작품도 읽을 때마다 새로운 의미를 발견하게 한다.</div>
+  </div>
+  <div class="topic-card">
+    <div class="tc-label">STRUCTURE · 구조</div>
+    <div class="tc-content">
+      <div class="structure-step"><span class="step-badge">도입</span><span class="step-text">문학의 정의 부정 — 단순 정보 전달 수단이 아님</span></div>
+      <div class="structure-step"><span class="step-badge">전개1</span><span class="step-text">문학의 특성 — 거듭 읽어도 새 의미 발견, 관점에 따라 의미 변화</span></div>
+      <div class="structure-step"><span class="step-badge">전개2</span><span class="step-text">구체적 예시 — 리어왕: 20대와 70대의 다른 독서 경험</span></div>
+      <div class="structure-step"><span class="step-badge">결론</span><span class="step-text">문학의 가변성 — 독자의 분석·상상·감정 참여가 의미를 변화시킴</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ⑥ 변형문제 -->
+<div class="tab-panel" data-tab="변형문제" data-pid="4">
+  <div class="section-title"><span class="icon">✏️</span> 변형문제</div>
+
+  <div class="quiz-block" id="q41">
+    <div class="q-num">문항 1</div><div class="q-type">주제 추론</div>
+    <div class="q-text kor">위 글의 주제로 가장 적절한 것은?</div>
+    <ul class="options" id="q41-opts">
+      <li onclick="checkAnswer('4',1,this,false,'셰익스피어 작품 분석은 이 글의 주제가 아닙니다.')"><span class="opt-mark">①</span> 셰익스피어 작품이 현대 독자에게 미치는 영향</li>
+      <li onclick="checkAnswer('4',1,this,false,'독서 속도 향상은 이 글에서 다루지 않습니다.')"><span class="opt-mark">②</span> 효율적인 독서 속도를 향상시키는 방법</li>
+      <li onclick="checkAnswer('4',1,this,true,'독자의 경험 변화에 따라 문학의 의미가 달라진다는 점이 핵심 주제입니다.')"><span class="opt-mark">③</span> 독자의 경험과 관점에 따라 의미가 달라지는 문학의 살아있는 특성</li>
+      <li onclick="checkAnswer('4',1,this,false,'정보 처리 능력 개발은 글의 핵심이 아닙니다.')"><span class="opt-mark">④</span> 문학 읽기를 통한 정보 처리 능력 개발의 중요성</li>
+      <li onclick="checkAnswer('4',1,this,false,'고전 문학 보존이 아닌 살아있는 독서 경험에 관한 글입니다.')"><span class="opt-mark">⑤</span> 고전 문학 보존과 현대적 재해석의 필요성</li>
+    </ul>
+    <div class="feedback-box" id="q41-fb"></div>
+    <button class="reset-btn" id="q41-reset" onclick="resetQuiz('4',1)">↺ 다시 풀기</button>
+  </div>
+
+  <div class="quiz-block" id="q42">
+    <div class="q-num">문항 2</div><div class="q-type">빈칸 추론</div>
+    <div class="q-text">What has changed is not the work of literature exactly but our experiences that are now __________. One's perception of King Lear is a different experience in one's twenties than in one's seventies.</div>
+    <ul class="options" id="q42-opts">
+      <li onclick="checkAnswer('4',2,this,false,'forgotten(잊혀진)은 문맥과 반대 방향입니다.')"><span class="opt-mark">①</span> forgotten in daily life</li>
+      <li onclick="checkAnswer('4',2,this,false,'summarized(요약된)는 내용과 맞지 않습니다.')"><span class="opt-mark">②</span> summarized by scholars</li>
+      <li onclick="checkAnswer('4',2,this,true,'reflected in the text(텍스트에 반영된)가 정답으로, 변한 것은 독자의 경험이며 이것이 텍스트에 반영됩니다.')"><span class="opt-mark">③</span> reflected in the text</li>
+      <li onclick="checkAnswer('4',2,this,false,'ignored by critics(비평가들에게 무시된)는 문맥에 맞지 않습니다.')"><span class="opt-mark">④</span> ignored by critics</li>
+      <li onclick="checkAnswer('4',2,this,false,'recorded in history는 글의 내용과 다릅니다.')"><span class="opt-mark">⑤</span> recorded in history</li>
+    </ul>
+    <div class="feedback-box" id="q42-fb"></div>
+    <button class="reset-btn" id="q42-reset" onclick="resetQuiz('4',2)">↺ 다시 풀기</button>
+  </div>
+
+  <div class="quiz-block" id="q43">
+    <div class="q-num">문항 3</div><div class="q-type">어법 오류</div>
+    <div class="q-text">다음 밑줄 친 부분 중 어법상 틀린 것은?<br><br>
+    Literature <span class="underline-word" onclick="checkUnderline('4',3,this,false,'invites는 단수 주어 Literature에 호응하는 동사로 올바릅니다.')" data-idx="1">invites</span> us back to re-experience what it offers. Literature continues to communicate meaning and, most remarkably, to <span class="underline-word" onclick="checkUnderline('4',3,this,false,'shift는 continues to의 병렬 to-V로 올바릅니다.')" data-idx="2">shift</span> its meaning based on our perspective. What has changed is not the work itself but our experiences that are now <span class="underline-word" onclick="checkUnderline('4',3,this,false,'reflected는 수동태 형태로 올바릅니다.')" data-idx="3">reflected</span> in the text. Reading literature requires full reader <span class="underline-word" onclick="checkUnderline('4',3,this,false,'participation은 requires의 목적어인 명사로 올바릅니다.')" data-idx="4">participation</span>, activating not just processing skills but analysis, imagination, and emotions. Those changes explain how works of literature are more <span class="underline-word" onclick="checkUnderline('4',3,this,true,'invariable(불변의)은 문맥상 틀림 → variable(가변적인)이어야 합니다. 문학은 독자에 따라 변하기 때문입니다.')" data-idx="5">invariable</span> than everyday reading.
+    </div>
+    <div class="feedback-box" id="q43-fb"></div>
+    <button class="reset-btn" id="q43-reset" onclick="resetUnderline('4',3)">↺ 다시 풀기</button>
+  </div>
+
+  <div class="quiz-block" id="q44">
+    <div class="q-num">문항 4</div><div class="q-type">내용 불일치</div>
+    <div class="q-text kor">위 글의 내용과 일치하지 않는 것은?</div>
+    <ul class="options" id="q44-opts">
+      <li onclick="checkAnswer('4',4,this,false,'문학은 거듭 읽도록 우리를 불러들인다고 했습니다.')"><span class="opt-mark">①</span> 문학은 독자를 거듭거듭 다시 불러들여 재경험하고 재평가하게 한다.</li>
+      <li onclick="checkAnswer('4',4,this,false,'우리의 관점에 따라 문학의 의미가 변한다고 했습니다.')"><span class="opt-mark">②</span> 문학은 독자의 관점에 따라 그 의미가 달라질 수 있다.</li>
+      <li onclick="checkAnswer('4',4,this,false,'변한 것은 문학 작품이 아니라 우리의 경험이라고 했습니다.')"><span class="opt-mark">③</span> 같은 작품을 다시 읽을 때 발견되는 새로운 의미는 독자의 경험 변화에서 비롯된다.</li>
+      <li onclick="checkAnswer('4',4,this,true,'문학 읽기는 분석, 상상력, 감정을 활성화하지만 이것이 변하지 않는다는 내용은 없습니다. 문맥상 이것들은 변합니다.')"><span class="opt-mark">④</span> 문학 읽기가 활성화하는 분석력, 상상력, 감정은 시간이 지나도 변하지 않는다.</li>
+      <li onclick="checkAnswer('4',4,this,false,'리어왕은 20대와 70대에 다른 경험을 준다고 했습니다.')"><span class="opt-mark">⑤</span> 리어왕은 20대에 읽을 때와 70대에 읽을 때 다른 경험을 제공한다.</li>
+    </ul>
+    <div class="feedback-box" id="q44-fb"></div>
+    <button class="reset-btn" id="q44-reset" onclick="resetQuiz('4',4)">↺ 다시 풀기</button>
+  </div>
+
+  <div class="quiz-block" id="q45">
+    <div class="q-num">문항 5</div><div class="q-type">글의 순서</div>
+    <div class="q-text">주어진 글 다음에 이어질 글의 순서로 가장 적절한 것은?<br><br>
+    <b>주어진 글:</b> Literature is not a disposable carrier of nuggets of information. Literature (as opposed to everyday reading) invites us back again and again to re-experience what it offers and to reassess its meanings.<br><br>
+    <b>(A)</b> We have all had the experience of taking up a classic work of literature after several years and finding in it details and significance we missed the first time through. What has changed is not the work but our experiences reflected in the text.<br>
+    <b>(B)</b> This is true because reading literature requires full reader participation, activating not just our informational processing skills but our analysis, imagination, and emotions. These change over time, explaining how literature is more variable than everyday reading.<br>
+    <b>(C)</b> Literature continues to communicate meaning over time, and, most remarkably, to shift its meaning based on our perspective.</div>
+    <ul class="options" id="q45-opts">
+      <li onclick="checkAnswer('4',5,this,false,'C에서 특성 설명, A에서 구체적 예시, B에서 이유/결론의 흐름이 자연스럽습니다.')"><span class="opt-mark">①</span> (A)-(C)-(B)</li>
+      <li onclick="checkAnswer('4',5,this,true,'C(문학의 특성: 의미 변화) → A(구체적 경험 예시) → B(이유: 독자 참여, 결론)의 흐름이 자연스럽습니다.')"><span class="opt-mark">②</span> (C)-(A)-(B)</li>
+      <li onclick="checkAnswer('4',5,this,false,'A는 구체 예시이므로 C의 특성 설명 이후에 와야 합니다.')"><span class="opt-mark">③</span> (A)-(B)-(C)</li>
+      <li onclick="checkAnswer('4',5,this,false,'B는 This is true라는 표현으로 앞 내용을 전제하므로 마지막에 와야 합니다.')"><span class="opt-mark">④</span> (B)-(C)-(A)</li>
+      <li onclick="checkAnswer('4',5,this,false,'C가 먼저 특성을 소개해야 합니다.')"><span class="opt-mark">⑤</span> (B)-(A)-(C)</li>
+    </ul>
+    <div class="feedback-box" id="q45-fb"></div>
+    <button class="reset-btn" id="q45-reset" onclick="resetQuiz('4',5)">↺ 다시 풀기</button>
+  </div>
+
+  <div class="section-title" style="margin-top:32px"><span class="icon">✍️</span> 서술형</div>
+  <div class="writing-block">
+    <div class="w-label">서술형 1 · 빈칸 요약</div>
+    <div class="w-q">다음 빈칸 (A), (B)에 들어갈 말을 본문에서 찾아 쓰시오.<br><br>
+    Unlike everyday reading, literature (A) <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u> us to return repeatedly, and its meaning (B) <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u> based on our changing perspectives over time.</div>
+    <div class="w-cond">조건: 본문에서 찾아 쓸 것 / 각 1단어</div>
+    <textarea placeholder="답안을 여기에 작성하세요..."></textarea>
+    <button class="answer-toggle" onclick="toggleAnswer(this)">모범답안 보기</button>
+    <div class="model-answer">(A) invites&nbsp;&nbsp;&nbsp;(B) shifts</div>
+  </div>
+  <div class="writing-block">
+    <div class="w-label">서술형 2 · 영어 서술</div>
+    <div class="w-q">문학 읽기가 일상적인 독서와 다른 이유를 본문의 내용을 바탕으로 설명하시오.</div>
+    <div class="w-cond">조건: 완전한 영어 문장으로 / 30단어 내외</div>
+    <textarea placeholder="답안을 여기에 작성하세요..."></textarea>
+    <button class="answer-toggle" onclick="toggleAnswer(this)">모범답안 보기</button>
+    <div class="model-answer">Reading literature requires full reader participation, activating not just informational processing but also analysis, imagination, and emotions, which change over time and allow readers to discover new meanings with each reading.</div>
+  </div>
+</div>
+
+</div><!-- end passage-4 -->
+  </div><!-- #content -->
+</div><!-- #main -->
+
+<script>
+// ── 상태 ──
+var currentPid = 'G';
+var currentTab = '전문';
+
+// ── 지문 선택 ──
+function selectPassage(pid) {
+  document.querySelectorAll('.passage-block').forEach(function(el) {
+    el.style.display = 'none';
+  });
+  var block = document.getElementById('passage-' + pid);
+  if (block) block.style.display = 'block';
+
+  document.querySelectorAll('.passage-btn').forEach(function(btn) {
+    btn.classList.remove('active');
+  });
+  var btns = document.querySelectorAll('.passage-btn');
+  btns.forEach(function(btn) {
+    if (btn.querySelector('.pid') && btn.querySelector('.pid').textContent.indexOf('12-' + pid) !== -1) {
+      btn.classList.add('active');
+    }
+  });
+  // G 처리
+  if (pid === 'G') {
+    btns[0].classList.add('active');
+  }
+
+  currentPid = pid;
+  selectTab(currentTab);
+}
+
+// ── 탭 선택 ──
+function selectTab(tabName) {
+  currentTab = tabName;
+
+  document.querySelectorAll('.tab-btn').forEach(function(btn) {
+    btn.classList.remove('active');
+    if (btn.textContent.indexOf(tabName) !== -1 ||
+        (tabName === '전문' && btn.textContent.indexOf('전문') !== -1 && btn.textContent.indexOf('해석') === -1) ||
+        (tabName === '전문해석' && btn.textContent.indexOf('전문해석') !== -1) ||
+        (tabName === '주제요지' && btn.textContent.indexOf('주제') !== -1) ||
+        (tabName === '변형문제' && btn.textContent.indexOf('변형') !== -1) ||
+        (tabName === '문장분석' && btn.textContent.indexOf('문장') !== -1) ||
+        (tabName === '핵심단어' && btn.textContent.indexOf('핵심') !== -1)) {
+      btn.classList.add('active');
+    }
+  });
+
+  var block = document.getElementById('passage-' + currentPid);
+  if (!block) return;
+
+  block.querySelectorAll('.tab-panel').forEach(function(panel) {
+    panel.classList.remove('active');
+    if (panel.getAttribute('data-tab') === tabName && panel.getAttribute('data-pid') === currentPid) {
+      panel.classList.add('active');
+    }
+  });
+
+  window.scrollTo(0, 0);
+}
+
+// ── 탭 버튼 클릭 바인딩 ──
+document.querySelectorAll('.tab-btn').forEach(function(btn) {
+  btn.onclick = function() {
+    var txt = btn.textContent;
+    if (txt.indexOf('전문해석') !== -1) selectTab('전문해석');
+    else if (txt.indexOf('전문') !== -1) selectTab('전문');
+    else if (txt.indexOf('문장분석') !== -1) selectTab('문장분석');
+    else if (txt.indexOf('핵심단어') !== -1) selectTab('핵심단어');
+    else if (txt.indexOf('주제') !== -1) selectTab('주제요지');
+    else if (txt.indexOf('변형') !== -1) selectTab('변형문제');
+  };
+});
+
+// ── 객관식 퀴즈 ──
+function checkAnswer(pid, qNum, el, isCorrect, feedback) {
+  var key = 'q' + pid + qNum;
+  var opts = document.getElementById(key + '-opts');
+  if (!opts) return;
+  var items = opts.querySelectorAll('li');
+  var alreadyDone = false;
+  items.forEach(function(li) {
+    if (li.classList.contains('correct') || li.classList.contains('wrong')) alreadyDone = true;
+  });
+  if (alreadyDone) return;
+
+  if (isCorrect) {
+    el.classList.add('correct');
+    el.querySelector('.opt-mark').textContent = '✓';
+  } else {
+    el.classList.add('wrong');
+    el.querySelector('.opt-mark').textContent = '✗';
+    // reveal correct
+    items.forEach(function(li) {
+      if (li.onclick && li.onclick.toString().indexOf('true') !== -1) {
+        li.classList.add('revealed');
+        li.querySelector('.opt-mark').textContent = '✓';
+      }
+    });
+  }
+
+  var fb = document.getElementById(key + '-fb');
+  if (fb) {
+    fb.textContent = (isCorrect ? '✓ 정답! ' : '✗ 오답. ') + feedback;
+    fb.style.display = 'block';
+    fb.style.background = isCorrect ? '#e8f5e9' : '#ffebee';
+    fb.style.borderLeftColor = isCorrect ? '#2e7d32' : '#c62828';
+    fb.style.color = isCorrect ? '#2e7d32' : '#c62828';
+  }
+
+  var rst = document.getElementById(key + '-reset');
+  if (rst) rst.style.display = 'inline-block';
+}
+
+function resetQuiz(pid, qNum) {
+  var key = 'q' + pid + qNum;
+  var opts = document.getElementById(key + '-opts');
+  if (opts) {
+    opts.querySelectorAll('li').forEach(function(li) {
+      li.classList.remove('correct', 'wrong', 'revealed');
+      var mark = li.querySelector('.opt-mark');
+      if (mark) {
+        var orig = ['①','②','③','④','⑤'];
+        var idx = Array.from(opts.querySelectorAll('li')).indexOf(li);
+        mark.textContent = orig[idx] || mark.textContent;
+      }
+    });
+  }
+  var fb = document.getElementById(key + '-fb');
+  if (fb) fb.style.display = 'none';
+  var rst = document.getElementById(key + '-reset');
+  if (rst) rst.style.display = 'none';
+}
+
+// ── 밑줄 어법 퀴즈 ──
+function checkUnderline(pid, qNum, el, isCorrect, feedback) {
+  var key = 'q' + pid + qNum;
+  var block = document.getElementById(key);
+  if (!block) return;
+  var words = block.querySelectorAll('.underline-word');
+  var alreadyDone = false;
+  words.forEach(function(w) {
+    if (w.classList.contains('uw-correct') || w.classList.contains('uw-wrong')) alreadyDone = true;
+  });
+  if (alreadyDone) return;
+
+  if (isCorrect) {
+    el.classList.add('uw-correct');
+  } else {
+    el.classList.add('uw-wrong');
+    // reveal correct
+    words.forEach(function(w) {
+      if (w.onclick && w.onclick.toString().indexOf(',true,') !== -1) {
+        w.classList.add('uw-correct');
+      }
+    });
+  }
+
+  var fb = document.getElementById(key + '-fb');
+  if (fb) {
+    fb.textContent = (isCorrect ? '✓ 정답! ' : '✗ 오답. ') + feedback;
+    fb.style.display = 'block';
+    fb.style.background = isCorrect ? '#e8f5e9' : '#ffebee';
+    fb.style.borderLeftColor = isCorrect ? '#2e7d32' : '#c62828';
+    fb.style.color = isCorrect ? '#2e7d32' : '#c62828';
+  }
+  var rst = document.getElementById(key + '-reset');
+  if (rst) rst.style.display = 'inline-block';
+}
+
+function resetUnderline(pid, qNum) {
+  var key = 'q' + pid + qNum;
+  var block = document.getElementById(key);
+  if (!block) return;
+  block.querySelectorAll('.underline-word').forEach(function(w) {
+    w.classList.remove('uw-correct', 'uw-wrong');
+  });
+  var fb = document.getElementById(key + '-fb');
+  if (fb) fb.style.display = 'none';
+  var rst = document.getElementById(key + '-reset');
+  if (rst) rst.style.display = 'none';
+}
+
+// ── 서술형 모범답안 토글 ──
+function toggleAnswer(btn) {
+  var ans = btn.nextElementSibling;
+  if (!ans) return;
+  if (ans.classList.contains('show')) {
+    ans.classList.remove('show');
+    btn.textContent = '모범답안 보기';
+  } else {
+    ans.classList.add('show');
+    btn.textContent = '모범답안 숨기기';
+  }
+}
+
+// ── 초기화 ──
+selectPassage('G');
+</script>
+</body>
+</html>
